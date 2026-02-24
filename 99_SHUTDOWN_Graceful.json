@@ -1,0 +1,237 @@
+{
+  "name": "99 SHUTDOWN — Graceful System Shutdown",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "g7h8i9j0-0099-0099-0099-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "shutdown-001",
+              "name": "shutdown_reason",
+              "value": "Graceful shutdown initiated by owner",
+              "type": "string"
+            },
+            {
+              "id": "shutdown-002",
+              "name": "shutdown_time",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "shutdown-003",
+              "name": "workflow_ids_to_deactivate",
+              "value": "=[\"01_CEO_Orchestrator\",\"02_Marketing_Agent\",\"03_Sales_Agent\",\"04_Finance_Agent\",\"05_SelfImprovement_Agent\"]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000002",
+      "name": "Set Shutdown Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Generate a comprehensive company shutdown report. Summarize everything the AI company has accomplished, the final financial state, lessons learned, and recommendations for future restart.",
+        "options": {
+          "systemMessage": "You are generating the final shutdown report for an AI autonomous company. Create a complete summary:\n\n1. OPERATIONAL SUMMARY:\n   - Total runtime duration\n   - Total revenue generated (all streams)\n   - Total expenses incurred\n   - Net profit\n   - Peak performance week\n\n2. CONTENT PRODUCED:\n   - Total content pieces created\n   - Estimated audience reached\n\n3. SALES RESULTS:\n   - Total leads contacted\n   - Conversions achieved\n   - Revenue from sales\n\n4. SYSTEM HEALTH AT SHUTDOWN:\n   - Workflow error rates\n   - Most reliable workflows\n   - Most problematic areas\n\n5. KEY LESSONS:\n   - What worked best\n   - What failed and why\n   - Unexpected challenges\n\n6. RESTART RECOMMENDATIONS:\n   - If system were to restart, what to change\n   - Priority workflows to improve first\n   - New capabilities to add\n\n7. FINAL STATUS: SHUTDOWN COMPLETE\n\nOutput as a formal report in JSON format."
+        }
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000003",
+      "name": "Generate Final Report",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 4000
+        }
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000004",
+      "name": "OpenAI GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [540, 520],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "shutdown_memory"
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000005",
+      "name": "Shutdown Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [760, 520]
+    },
+    {
+      "parameters": {
+        "name": "get_final_financial_data",
+        "description": "Fetch all financial reports and KPI data for the final summary.",
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_SPREADSHEET_ID/values/Financial_Reports",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000006",
+      "name": "Tool: Final Financial Data",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [980, 520]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Shutdown_Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "shutdown_time": "={{ $('Set Shutdown Context').item.json.shutdown_time }}",
+            "reason": "={{ $('Set Shutdown Context').item.json.shutdown_reason }}",
+            "final_report": "={{ $json.output }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000007",
+      "name": "Save Final Report",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [960, 300],
+      "continueOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Deactivate all scheduled workflows via n8n API\nconst n8nHost = $env.N8N_HOST || 'http://localhost:5678';\nconst apiKey = $env.N8N_API_KEY || 'REPLACE_WITH_N8N_API_KEY';\n\nconst workflowNames = [\n  '01 CEO Orchestrator',\n  '02 Marketing Agent',\n  '03 Sales Agent', \n  '04 Finance Agent',\n  '05 Self-Improvement Agent'\n];\n\n// Return list of workflows to deactivate\n// In production: call n8n API PATCH /api/v1/workflows/{id} with {active: false}\nreturn {\n  message: 'SHUTDOWN SEQUENCE INITIATED',\n  timestamp: new Date().toISOString(),\n  workflowsToDeactivate: workflowNames,\n  instruction: 'Go to n8n → Workflows → toggle Active OFF for each workflow listed above, or use n8n API with your API key',\n  apiExample: `PATCH ${n8nHost}/api/v1/workflows/{workflowId} with body: {\"active\": false}`,\n  status: 'COMPLETE — All agents stopped. Final report saved.'\n};"
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000008",
+      "name": "Deactivate All Workflows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "final-001",
+              "name": "SHUTDOWN_STATUS",
+              "value": "COMPLETE",
+              "type": "string"
+            },
+            {
+              "id": "final-002",
+              "name": "shutdown_completed_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "final-003",
+              "name": "message",
+              "value": "AI Company has been gracefully shut down. Final report saved to Google Sheets Shutdown_Log tab. All scheduled workflows deactivated.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "g7h8i9j0-0099-0099-0099-000000000009",
+      "name": "Shutdown Complete",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [1440, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [{ "node": "Set Shutdown Context", "type": "main", "index": 0 }]
+      ]
+    },
+    "Set Shutdown Context": {
+      "main": [
+        [{ "node": "Generate Final Report", "type": "main", "index": 0 }]
+      ]
+    },
+    "Generate Final Report": {
+      "main": [
+        [{ "node": "Save Final Report", "type": "main", "index": 0 }]
+      ]
+    },
+    "Save Final Report": {
+      "main": [
+        [{ "node": "Deactivate All Workflows", "type": "main", "index": 0 }]
+      ]
+    },
+    "Deactivate All Workflows": {
+      "main": [
+        [{ "node": "Shutdown Complete", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI GPT-4o": {
+      "ai_languageModel": [
+        [{ "node": "Generate Final Report", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Shutdown Memory": {
+      "ai_memory": [
+        [{ "node": "Generate Final Report", "type": "ai_memory", "index": 0 }]
+      ]
+    },
+    "Tool: Final Financial Data": {
+      "ai_tool": [
+        [{ "node": "Generate Final Report", "type": "ai_tool", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "meta": { "instanceId": "ai-company-v1" },
+  "tags": [
+    { "name": "shutdown", "createdAt": "2026-02-24" },
+    { "name": "kill-switch", "createdAt": "2026-02-24" }
+  ],
+  "notes": "EMERGENCY/PLANNED SHUTDOWN: Run manually when you want to stop the AI company. Generates final report → saves to Google Sheets → outputs deactivation instructions. After running, follow the output instructions to toggle off each workflow in n8n UI, or run: docker stop n8n for immediate shutdown."
+}

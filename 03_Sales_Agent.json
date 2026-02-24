@@ -1,0 +1,251 @@
+{
+  "name": "03 Sales Agent — Daily Lead Generation & Outreach",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000001",
+      "name": "Schedule: Daily 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sales-ctx-001",
+              "name": "sales_prompt",
+              "value": "=Today is {{ $now.toFormat('cccc, MMMM d yyyy') }}. Execute today's sales activities: find new leads, write personalized outreach messages, and follow up with previous contacts. Focus on selling AI automation services and n8n workflow packages.",
+              "type": "string"
+            },
+            {
+              "id": "sales-ctx-002",
+              "name": "target_leads_count",
+              "value": 10,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000002",
+      "name": "Set Sales Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.sales_prompt }}",
+        "options": {
+          "systemMessage": "You are the Sales Agent for an AI automation company. Your daily mission is to grow revenue by finding and converting leads.\n\nTarget Customers:\n- Small business owners who need automation\n- Freelancers who want to scale with AI tools\n- Startups that need workflow automation\n- Marketing agencies needing content automation\n\nDaily Tasks:\n1. LEAD RESEARCH: Find 10 potential leads on LinkedIn/Twitter/Reddit who have expressed pain points around manual work, automation needs, or scaling\n2. PERSONALIZED OUTREACH: Write unique, value-first outreach messages (NOT generic spam)\n   - Reference specific pain points from their post/profile\n   - Offer one concrete, free tip before pitching\n   - Keep messages under 150 words\n   - Include a soft CTA (book a call, reply to this, check our tool)\n3. FOLLOW-UP: Create follow-up sequences for previous contacts (Day 3, Day 7)\n4. OFFER MANAGEMENT: Update service offerings based on market demand\n\nSERVICES TO SELL:\n- n8n workflow setup: $500–2,000 per project\n- AI agent monthly retainer: $300–1,000/month  \n- Content automation package: $200–500/month\n- Custom automation consulting: $150/hour\n\nFORBIDDEN: Mass spam, fake testimonials, pressure tactics, cold calls, purchasing email lists.\n\nOutput JSON with keys: leadsFound, outreachMessages, followUps, dailySummary"
+        }
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000003",
+      "name": "Sales Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.5,
+          "maxTokens": 3500
+        }
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000004",
+      "name": "OpenAI GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [480, 520],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "sales_agent_memory"
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000005",
+      "name": "Sales Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [700, 520]
+    },
+    {
+      "parameters": {
+        "name": "find_leads",
+        "description": "Search for potential customers on social platforms and communities. Look for people expressing pain points around manual processes, automation needs, or content creation challenges.",
+        "method": "GET",
+        "url": "https://api.search.brave.com/res/v1/web/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `lead search query like site:reddit.com automation pain point`, 'string') }}"
+            },
+            {
+              "name": "count",
+              "value": "15"
+            },
+            {
+              "name": "freshness",
+              "value": "pw"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000006",
+      "name": "Tool: Find Leads",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [920, 520]
+    },
+    {
+      "parameters": {
+        "name": "send_outreach_email",
+        "description": "Send a personalized outreach email to a prospect via SendGrid. Use only after crafting a genuinely helpful, non-spammy message.",
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('emailPayload', `{\"personalizations\":[{\"to\":[{\"email\":\"prospect@example.com\"}],\"subject\":\"Quick idea for you\"}],\"from\":{\"email\":\"hello@yourcompany.com\",\"name\":\"AI Co\"},\"content\":[{\"type\":\"text/plain\",\"value\":\"Your personalized message here\"}]}`, 'json') }}",
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000007",
+      "name": "Tool: Send Email",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1140, 520]
+    },
+    {
+      "parameters": {
+        "name": "check_crm_history",
+        "description": "Check Google Sheets CRM for previous contact history with a prospect to avoid duplicate outreach and personalize follow-ups.",
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_SPREADSHEET_ID/values/CRM",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000008",
+      "name": "Tool: CRM History",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1360, 520]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "CRM",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $now.toISO() }}",
+            "daily_summary": "={{ $json.output }}",
+            "leads_found": "={{ JSON.parse($json.output || '{}').leadsFound?.length || 0 }}",
+            "outreach_sent": "={{ JSON.parse($json.output || '{}').outreachMessages?.length || 0 }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000009",
+      "name": "Log to CRM Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [960, 300],
+      "continueOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule: Daily 9am": {
+      "main": [
+        [{ "node": "Set Sales Context", "type": "main", "index": 0 }]
+      ]
+    },
+    "Set Sales Context": {
+      "main": [
+        [{ "node": "Sales Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Sales Agent": {
+      "main": [
+        [{ "node": "Log to CRM Sheet", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI GPT-4o": {
+      "ai_languageModel": [
+        [{ "node": "Sales Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Sales Memory": {
+      "ai_memory": [
+        [{ "node": "Sales Agent", "type": "ai_memory", "index": 0 }]
+      ]
+    },
+    "Tool: Find Leads": {
+      "ai_tool": [
+        [{ "node": "Sales Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Tool: Send Email": {
+      "ai_tool": [
+        [{ "node": "Sales Agent", "type": "ai_tool", "index": 1 }]
+      ]
+    },
+    "Tool: CRM History": {
+      "ai_tool": [
+        [{ "node": "Sales Agent", "type": "ai_tool", "index": 2 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "meta": { "instanceId": "ai-company-v1" },
+  "tags": [
+    { "name": "sales", "createdAt": "2026-02-24" },
+    { "name": "outreach", "createdAt": "2026-02-24" }
+  ],
+  "notes": "Runs daily at 9:00am. Finds 10 leads/day, writes personalized outreach, logs to CRM sheet. IMPORTANT: Set up SendGrid credentials before activating to avoid sending from wrong address."
+}

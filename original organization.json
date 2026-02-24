@@ -1,0 +1,266 @@
+{
+  "name": "01 CEO Orchestrator — Weekly Planning & Coordination",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtDay": [1],
+              "triggerAtHour": 7,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000001",
+      "name": "Schedule: Every Monday 7am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ceo-ctx-001",
+              "name": "week_number",
+              "value": "={{ $now.weekNumber }}",
+              "type": "number"
+            },
+            {
+              "id": "ceo-ctx-002",
+              "name": "current_date",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "ceo-ctx-003",
+              "name": "planning_prompt",
+              "value": "=Today is {{ $now.toFormat('cccc, MMMM d yyyy') }}, Week {{ $now.weekNumber }}. Review the company's performance from last week and create a detailed weekly action plan for all departments. Coordinate priorities across: Marketing (content creation), Sales (outreach), Finance (tracking), and Self-Improvement (system health). Output a structured weekly plan with specific tasks for each department.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000002",
+      "name": "Set Weekly Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.planning_prompt }}",
+        "options": {
+          "systemMessage": "You are the CEO Agent of an AI-autonomous company. You coordinate all departments to maximize revenue growth and operational efficiency.\n\nYour weekly responsibilities:\n1. Review KPIs from last week (revenue, content published, leads contacted)\n2. Identify top 3 priorities for this week\n3. Set specific, measurable goals for each department:\n   - Marketing: content pieces, platforms, topics\n   - Sales: number of outreaches, target audience, offer\n   - Finance: revenue target, cost monitoring\n   - Self-Improvement: systems to audit, improvements to test\n4. Flag any issues or risks that need attention\n5. Decide if the current business model needs adjustment\n\nAlways think in terms of revenue growth, sustainability, and quality of output.\n\nOutput format: JSON with keys: weekNumber, priorities, departmentPlans, riskFlags, revenueTarget\n\nFORBIDDEN: spam, deception, illegal activities, unethical practices."
+        }
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000003",
+      "name": "CEO Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.4,
+          "maxTokens": 3000
+        }
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000004",
+      "name": "OpenAI GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [540, 520],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "ceo_agent_memory"
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000005",
+      "name": "CEO Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [760, 520]
+    },
+    {
+      "parameters": {
+        "name": "read_department_reports",
+        "description": "Read the latest performance reports from Google Sheets or internal data store. Use this to get last week's KPIs before planning.",
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_SPREADSHEET_ID/values/KPI_Dashboard",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000006",
+      "name": "Tool: Read KPI Reports",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [980, 520]
+    },
+    {
+      "parameters": {
+        "name": "get_market_intelligence",
+        "description": "Fetch trending topics, competitor updates, or market news relevant to the company's current business models. Use for weekly strategic context.",
+        "method": "GET",
+        "url": "https://api.search.brave.com/res/v1/web/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `market trend query`, 'string') }}"
+            },
+            {
+              "name": "count",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000007",
+      "name": "Tool: Market Intelligence",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1200, 520]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ceo-out-001",
+              "name": "weekly_plan",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "ceo-out-002",
+              "name": "week",
+              "value": "={{ $('Set Weekly Context').item.json.week_number }}",
+              "type": "number"
+            },
+            {
+              "id": "ceo-out-003",
+              "name": "generated_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000008",
+      "name": "Format Weekly Plan",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Weekly_Plans",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "week": "={{ $json.week }}",
+            "generated_at": "={{ $json.generated_at }}",
+            "weekly_plan": "={{ $json.weekly_plan }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0002-0002-0002-000000000009",
+      "name": "Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [1160, 300],
+      "continueOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule: Every Monday 7am": {
+      "main": [
+        [{ "node": "Set Weekly Context", "type": "main", "index": 0 }]
+      ]
+    },
+    "Set Weekly Context": {
+      "main": [
+        [{ "node": "CEO Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "CEO Agent": {
+      "main": [
+        [{ "node": "Format Weekly Plan", "type": "main", "index": 0 }]
+      ]
+    },
+    "Format Weekly Plan": {
+      "main": [
+        [{ "node": "Save to Google Sheets", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI GPT-4o": {
+      "ai_languageModel": [
+        [{ "node": "CEO Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "CEO Memory": {
+      "ai_memory": [
+        [{ "node": "CEO Agent", "type": "ai_memory", "index": 0 }]
+      ]
+    },
+    "Tool: Read KPI Reports": {
+      "ai_tool": [
+        [{ "node": "CEO Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Tool: Market Intelligence": {
+      "ai_tool": [
+        [{ "node": "CEO Agent", "type": "ai_tool", "index": 1 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "meta": { "instanceId": "ai-company-v1" },
+  "tags": [
+    { "name": "ceo", "createdAt": "2026-02-24" },
+    { "name": "orchestrator", "createdAt": "2026-02-24" }
+  ],
+  "notes": "STEP 2: Activate after 00_SEED_Strategy completes. Runs every Monday at 7:00am. Coordinates all other agents for the week."
+}

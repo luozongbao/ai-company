@@ -1,0 +1,290 @@
+{
+  "name": "00 SEED Strategy — Market Research & Business Selection",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are the Strategy Agent for an AI-only company. Your job is to research and identify the TOP 3 business models that:\n1. Can be executed 100% by AI + n8n workflow automation (no human required)\n2. Are ethical, legal, and non-deceptive\n3. Have measurable revenue potential within 3 months\n4. Require minimal upfront cost (< $100/month in API/tools)\n\nFor each business model, provide:\n- Name and description\n- Revenue potential (monthly estimate)\n- Time to first revenue (weeks)\n- Required tools / APIs\n- Automation feasibility score (1–10)\n- Risk score (1–10, lower is better)\n- Step-by-step launch plan\n\nFinally, RECOMMEND the best 2 models to launch first as a combined strategy.\n\nFORBIDDEN: Do not recommend spam, phishing, illegal activities, drug trade, gambling, adult content, MLM schemes, or any deceptive practices.\n\nOutput your analysis in structured JSON format."
+        }
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000002",
+      "name": "Strategy Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 4000
+        }
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000003",
+      "name": "OpenAI GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [360, 520],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "strategy_seed_session"
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000004",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [580, 520]
+    },
+    {
+      "parameters": {
+        "name": "web_research",
+        "description": "Search the web for current information about AI business trends, market opportunities, revenue data, and competitor analysis. Use this to gather real data before making recommendations.",
+        "method": "GET",
+        "url": "https://api.search.brave.com/res/v1/web/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `search query`, 'string') }}"
+            },
+            {
+              "name": "count",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000005",
+      "name": "Tool: Web Research",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [800, 520]
+    },
+    {
+      "parameters": {
+        "name": "score_and_rank",
+        "description": "Calculate weighted scores for business models based on revenue potential, automation feasibility, time-to-revenue, and risk. Returns ranked list.",
+        "language": "javaScript",
+        "jsCode": "// Score business models\nconst models = JSON.parse($input.first().json.models || '[]');\nconst scored = models.map(m => ({\n  ...m,\n  compositeScore: (\n    (m.revenuePotential / 10000) * 0.35 +\n    (m.automationFeasibility / 10) * 0.35 +\n    (1 - m.timeToRevenue / 12) * 0.20 +\n    (1 - m.riskScore / 10) * 0.10\n  )\n}));\nscored.sort((a, b) => b.compositeScore - a.compositeScore);\nreturn { rankedModels: scored };"
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000006",
+      "name": "Tool: Score & Rank",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [1020, 520]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-001",
+              "name": "strategy_result",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-002",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-003",
+              "name": "status",
+              "value": "seed_complete",
+              "type": "string"
+            },
+            {
+              "id": "assign-004",
+              "name": "next_action",
+              "value": "Activate 01_CEO_Orchestrator workflow and selected business workflows",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000007",
+      "name": "Prepare Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [820, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_HOST || 'http://localhost:5678' }}/webhook/strategy-result",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "strategy_result",
+              "value": "={{ $json.strategy_result }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000008",
+      "name": "Save Strategy Decision",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-seed-001",
+              "name": "prompt",
+              "value": "Research and analyze the current AI-automation business landscape (as of 2026). Identify the top 10 business models that an AI agent system running on n8n can execute autonomously to generate real revenue. Consider: content creation, SaaS, freelance automation, affiliate marketing, YouTube automation, newsletter, workflow selling. Provide detailed analysis and rank them. Output as structured JSON.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000009",
+      "name": "Set Research Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [380, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Research Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Research Prompt": {
+      "main": [
+        [
+          {
+            "node": "Strategy Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Strategy Agent": {
+      "main": [
+        [
+          {
+            "node": "Prepare Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Output": {
+      "main": [
+        [
+          {
+            "node": "Save Strategy Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4o": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Strategy Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Strategy Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Web Research": {
+      "ai_tool": [
+        [
+          {
+            "node": "Strategy Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Score & Rank": {
+      "ai_tool": [
+        [
+          {
+            "node": "Strategy Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "ai-company-v1"
+  },
+  "tags": [
+    { "name": "seed", "createdAt": "2026-02-24" },
+    { "name": "strategy", "createdAt": "2026-02-24" }
+  ],
+  "notes": "STEP 1: Run this workflow FIRST before activating any other workflow. It will research and select the best 2 business models to pursue. After running, read the output and manually activate the corresponding agent workflows."
+}
