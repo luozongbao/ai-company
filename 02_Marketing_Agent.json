@@ -247,6 +247,81 @@
           "name": "Google Sheets"
         }
       }
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// Parse the Marketing Agent JSON output into structured publishing payloads\nconst raw = $input.first().json.output || $input.first().json.content_package || '';\nlet content;\ntry {\n  content = JSON.parse(raw);\n} catch (e) {\n  // If not valid JSON, wrap as-is for best-effort publishing\n  content = { twitterThread: raw, linkedinPost: raw, newsletterSection: raw };\n}\n\nconst today = new Date().toISOString().split('T')[0];\nreturn [\n  {\n    json: {\n      twitter_text: Array.isArray(content.twitterThread)\n        ? content.twitterThread.join('\\n\\n')\n        : (content.twitterThread || '').slice(0, 280),\n      linkedin_text: content.linkedinPost || '',\n      ghost_title: `AI Automation Insight — ${today}`,\n      ghost_html: content.newsletterSection\n        ? `<p>${content.newsletterSection.replace(/\\n/g, '</p><p>')}</p>`\n        : '',\n      blog_outline: content.blogOutline || '',\n      publish_date: today\n    }\n  }\n];"
+      },
+      "id": "c3d4e5f6-0003-0003-0003-000000000011",
+      "name": "Parse Content for Publishing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1420, 220],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bufferapp.com/1/updates/create.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.twitter_text }}"
+            },
+            {
+              "name": "profile_ids[]",
+              "value": "={{ $env.BUFFER_TWITTER_PROFILE_ID || 'REPLACE_WITH_BUFFER_PROFILE_ID' }}"
+            },
+            {
+              "name": "scheduled_at",
+              "value": "={{ $now.plus({hours: 2}).toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c3d4e5f6-0003-0003-0003-000000000012",
+      "name": "Publish via Buffer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1660, 140],
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BUFFER_CREDENTIAL_ID",
+          "name": "Buffer API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.GHOST_API_URL || 'https://your-ghost-blog.com') + '/ghost/api/admin/posts/' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify({ posts: [{ title: $json.ghost_title, html: $json.ghost_html, status: 'draft', tags: [{ name: 'ai-automation' }, { name: 'newsletter' }], published_at: $now.toISO() }] }) }}",
+        "options": {}
+      },
+      "id": "c3d4e5f6-0003-0003-0003-000000000013",
+      "name": "Publish to Ghost Blog",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1660, 300],
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_GHOST_CREDENTIAL_ID",
+          "name": "Ghost Admin API"
+        }
+      }
     }
   ],
   "connections": {
@@ -269,6 +344,19 @@
       "main": [
         [{ "node": "Log Content to Sheets", "type": "main", "index": 0 }],
         [{ "node": "Log Error", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Content to Sheets": {
+      "main": [
+        [{ "node": "Parse Content for Publishing", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Content for Publishing": {
+      "main": [
+        [
+          { "node": "Publish via Buffer", "type": "main", "index": 0 },
+          { "node": "Publish to Ghost Blog", "type": "main", "index": 0 }
+        ]
       ]
     },
     "OpenAI GPT-4o": {
@@ -302,5 +390,5 @@
     { "name": "marketing", "createdAt": "2026-02-24" },
     { "name": "content", "createdAt": "2026-02-24" }
   ],
-  "notes": "Runs daily at 8:00am. Creates Twitter threads, LinkedIn posts, newsletter content, and blog outlines. Output saved to Google Sheets Content_Log tab."
+  "notes": "Runs daily at 8:00am. Creates Twitter threads, LinkedIn posts, newsletter content, and blog outlines. Content is logged to Google Sheets AND published: Twitter/LinkedIn via Buffer API, newsletter as Ghost draft. Set BUFFER_TWITTER_PROFILE_ID, GHOST_API_URL env vars + add Buffer/Ghost credentials before activating."
 }

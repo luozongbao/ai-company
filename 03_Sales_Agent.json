@@ -125,19 +125,13 @@
     {
       "parameters": {
         "name": "send_outreach_email",
-        "description": "Send a personalized outreach email to a prospect via SendGrid. Use only after crafting a genuinely helpful, non-spammy message.",
-        "method": "POST",
-        "url": "https://api.sendgrid.com/v3/mail/send",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "contentType": "json",
-        "jsonBody": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('emailPayload', `{\"personalizations\":[{\"to\":[{\"email\":\"prospect@example.com\"}],\"subject\":\"Quick idea for you\"}],\"from\":{\"email\":\"hello@yourcompany.com\",\"name\":\"AI Co\"},\"content\":[{\"type\":\"text/plain\",\"value\":\"Your personalized message here\"}]}`, 'json') }}",
-        "options": {}
+        "description": "Send a personalized outreach email to a prospect via SendGrid. Provide JSON with fields: to_email (string), subject (string), body (plain-text string under 150 words). The from-address is set automatically from the environment. Only use for genuine, value-first outreach.",
+        "language": "javaScript",
+        "jsCode": "// Send email via SendGrid — from-address loaded from environment variable\nconst params = $input.first().json;\nconst toEmail = params.to_email || params.email || params.to;\nconst subject = params.subject || 'A quick idea for you';\nconst body = params.body || params.message || params.content || '';\n\nif (!toEmail || !body) {\n  throw new Error('send_outreach_email requires to_email and body fields');\n}\n\n// These must be set as n8n environment variables\nconst fromEmail = $env.SENDGRID_FROM_EMAIL || 'hello@yourcompany.com';\nconst fromName  = $env.COMPANY_NAME || 'AI Automation Co';\nconst apiKey    = $env.SENDGRID_API_KEY || '';\n\nif (!apiKey) throw new Error('SENDGRID_API_KEY environment variable is not set');\n\nconst payload = {\n  personalizations: [{ to: [{ email: toEmail }], subject }],\n  from: { email: fromEmail, name: fromName },\n  content: [{ type: 'text/plain', value: body }]\n};\n\nconst response = await this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://api.sendgrid.com/v3/mail/send',\n  headers: {\n    'Authorization': `Bearer ${apiKey}`,\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify(payload)\n});\n\nreturn { success: true, to: toEmail, subject, from: fromEmail };"
       },
       "id": "d4e5f6g7-0004-0004-0004-000000000007",
       "name": "Tool: Send Email",
-      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1.1,
       "position": [1140, 520]
     },
@@ -247,5 +241,5 @@
     { "name": "sales", "createdAt": "2026-02-24" },
     { "name": "outreach", "createdAt": "2026-02-24" }
   ],
-  "notes": "Runs daily at 9:00am. Finds 10 leads/day, writes personalized outreach, logs to CRM sheet. IMPORTANT: Set up SendGrid credentials before activating to avoid sending from wrong address."
+  "notes": "Runs daily at 9:00am. Finds 10 leads/day, writes personalized outreach, logs to CRM sheet. REQUIRED env vars: SENDGRID_API_KEY, SENDGRID_FROM_EMAIL (your verified sender), COMPANY_NAME. Set these in n8n → Settings → Environment Variables before activating."
 }

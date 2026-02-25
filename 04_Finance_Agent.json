@@ -122,17 +122,25 @@
     {
       "parameters": {
         "name": "get_openai_usage",
-        "description": "Fetch OpenAI API usage and cost data for the past 7 days to track LLM expenses.",
+        "description": "Fetch OpenAI API token usage and cost data for the past 7 days to track LLM expenses. Uses the Organization Usage API.",
         "method": "GET",
-        "url": "https://api.openai.com/v1/usage",
+        "url": "https://api.openai.com/v1/organization/usage/completions",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "openAiApi",
         "sendQuery": true,
         "parametersQuery": {
           "values": [
             {
-              "name": "date",
-              "value": "={{ $now.toFormat('yyyy-MM-dd') }}"
+              "name": "start_time",
+              "value": "={{ Math.floor($now.minus({days: 7}).toMillis() / 1000) }}"
+            },
+            {
+              "name": "end_time",
+              "value": "={{ Math.floor($now.toMillis() / 1000) }}"
+            },
+            {
+              "name": "limit",
+              "value": "100"
             }
           ]
         },
