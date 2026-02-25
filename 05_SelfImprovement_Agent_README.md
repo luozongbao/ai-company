@@ -118,7 +118,7 @@ Save Improvement Report
 |---|---|---|
 | OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
 | Google Sheets OAuth2 | `Tool: All KPI Data`, `Save Improvement Report` | n8n → Credentials → Google Sheets OAuth2 |
-| Brave Search Header Auth | `Tool: Research New Tools` | HTTP Header Auth: `X-Subscription-Token` |
+| Brave Search Header Auth | `Tool: Research New Tools` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | n8n API Key (Header Auth) | `Tool: n8n Execution Logs` | n8n Settings → n8n API → Create key → ใช้ Header Auth |
 
 ---

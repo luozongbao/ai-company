@@ -85,7 +85,7 @@ Save to Google Sheets (sheet: Weekly_Plans)
 |---|---|---|
 | OpenAI API | `OpenAI GPT-4o` node | n8n → Credentials → OpenAI API |
 | Google Sheets OAuth2 | `Tool: Read KPI Reports`, `Save to Google Sheets` | n8n → Credentials → Google Sheets OAuth2 |
-| Brave Search Header Auth | `Tool: Market Intelligence` | HTTP Header Auth: `X-Subscription-Token` |
+| Brave Search Header Auth | `Tool: Market Intelligence` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | `REPLACE_WITH_SPREADSHEET_ID` | Google Sheets nodes | เปลี่ยนใน node parameters ทุกตัว |
 
 ---

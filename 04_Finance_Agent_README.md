@@ -99,7 +99,7 @@ Update KPI Dashboard
 |---|---|---|
 | OpenAI API | `OpenAI GPT-4o` + `Tool: API Cost Tracking` | n8n → Credentials → OpenAI API |
 | Google Sheets OAuth2 | `Save Financial Report`, `Update KPI Dashboard`, `Tool: Historical Reports` | n8n → Credentials → Google Sheets OAuth2 |
-| Stripe Secret Key (Header Auth) | `Tool: Stripe Revenue` | n8n → Credentials → HTTP Header Auth → `Authorization: Bearer sk_live_...` |
+| Stripe Secret Key (Header Auth) | `Tool: Stripe Revenue` | n8n → Credentials → HTTP Header Auth → `Authorization: Bearer sk_live_...` — ดู [SETUP_Stripe.md](SETUP_Stripe.md) |
 | `REPLACE_WITH_SPREADSHEET_ID` | ทุก Google Sheets node | เปลี่ยนใน node parameters |
 
 ---

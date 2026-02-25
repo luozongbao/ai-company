@@ -78,6 +78,8 @@ Save Strategy Decision
 | `REPLACE_WITH_SPREADSHEET_ID` | `Save Strategy Decision` | เปลี่ยนใน node parameter |
 
 > **Google Sheets:** สร้าง sheet ชื่อ `Strategy_Decisions` ใน Spreadsheet ก่อนรัน (columns: `timestamp`, `status`, `next_action`, `strategy_result`)
+>
+> 📄 **Brave Search setup guide ฉบับเต็ม:** [SETUP_BraveSearch.md](SETUP_BraveSearch.md)
 
 ---
 

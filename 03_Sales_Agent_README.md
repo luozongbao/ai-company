@@ -70,6 +70,8 @@ Log to CRM Sheet (Google Sheets → CRM)
 | `COMPANY_NAME` | ชื่อบริษัท/แบรนด์ | ปรากฏใน From name |
 
 > ตั้งที่: n8n → Settings → Environment Variables
+>
+> 📄 **ดู setup guide ฉบับเต็ม:** [SETUP_SendGrid.md](SETUP_SendGrid.md)
 
 ---
 
@@ -79,7 +81,7 @@ Log to CRM Sheet (Google Sheets → CRM)
 |---|---|---|
 | OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
 | Google Sheets OAuth2 | `Tool: CRM History`, `Log to CRM Sheet` | n8n → Credentials → Google Sheets OAuth2 |
-| Brave Search Header Auth | `Tool: Find Leads` | HTTP Header Auth: `X-Subscription-Token` |
+| Brave Search Header Auth | `Tool: Find Leads` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 
 ---
 

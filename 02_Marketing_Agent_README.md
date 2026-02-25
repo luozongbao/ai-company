@@ -87,7 +87,7 @@ Content Generated? (IF node)
 |---|---|---|
 | OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
 | Google Sheets OAuth2 | `Log Content to Sheets`, `Log Error` | n8n → Credentials → Google Sheets OAuth2 |
-| Brave Search Header Auth | `Tool: Trending Topics`, `Tool: SEO Keywords` | HTTP Header Auth: `X-Subscription-Token` |
+| Brave Search Header Auth | `Tool: Trending Topics`, `Tool: SEO Keywords` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | Buffer HTTP Header Auth | `Publish via Buffer` | `Authorization: Bearer BUFFER_ACCESS_TOKEN` |
 | Ghost HTTP Header Auth | `Publish to Ghost Blog` | `Authorization: Ghost YOUR_ADMIN_API_KEY` |
 | `BUFFER_TWITTER_PROFILE_ID` | env var | n8n → Settings → Environment Variables |
