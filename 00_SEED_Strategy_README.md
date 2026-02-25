@@ -47,7 +47,7 @@ Save Strategy Decision
 | Tool | ประเภท | หน้าที่ |
 |---|---|---|
 | `web_research` | HTTP (Brave Search API) | ค้นหาข้อมูลตลาด, รายได้, competition |
-| `score_and_rank` | Code (JavaScript) | คำนวณ composite score: revenue×0.35 + automation×0.35 + speed×0.20 + safety×0.10 |
+| `score_and_rank` | Code (JavaScript) | รับ JSON string ของ models array → คำนวณ composite score: revenue×0.35 + automation×0.35 + speed×0.20 + safety×0.10 → return JSON string ของ models เรียงลำดับ + top2 |
 
 ---
 
@@ -74,6 +74,10 @@ Save Strategy Decision
 |---|---|---|
 | OpenAI API | `OpenAI GPT-4o` node | n8n → Settings → Credentials → OpenAI API |
 | Brave Search Header Auth | `Tool: Web Research` | n8n → Credentials → HTTP Header Auth → `X-Subscription-Token: YOUR_KEY` |
+| Google Sheets OAuth2 | `Save Strategy Decision` | n8n → Credentials → Google Sheets OAuth2 |
+| `REPLACE_WITH_SPREADSHEET_ID` | `Save Strategy Decision` | เปลี่ยนใน node parameter |
+
+> **Google Sheets:** สร้าง sheet ชื่อ `Strategy_Decisions` ใน Spreadsheet ก่อนรัน (columns: `timestamp`, `status`, `next_action`, `strategy_result`)
 
 ---
 
@@ -123,8 +127,10 @@ Save Strategy Decision
 |---|---|---|
 | Agent ไม่ response | OpenAI credential ผิด | ตรวจสอบ API key ใน n8n Credentials |
 | Web Research ไม่ทำงาน | Brave API key ผิดหรือหมด quota | ดู [api.search.brave.com](https://api.search.brave.com) → Usage |
+| `score_and_rank` — Wrong output type | ~~เวอร์ชันเก่า return object~~ | **แก้แล้ว** — ตอนนี้ return JSON string แล้ว |
+| `Save Strategy Decision` — access to env vars denied | ~~เวอร์ชันเก่าใช้ `$env` ใน URL~~ | **แก้แล้ว** — เปลี่ยนเป็น Google Sheets แทน |
 | Output ไม่ใช่ JSON ที่ valid | Temperature สูงเกิน / prompt ไม่ชัด | ลอง execute ใหม่ หรือลด temperature เป็น 0.1 |
-| `Save Strategy Decision` fail | Webhook URL ไม่ถูกต้อง | ตั้ง `N8N_HOST` env var ให้ถูกต้อง — error นี้ `continueOnFail: true` จะไม่หยุด workflow |
+| `Save Strategy Decision` Google Sheets error | SpreadsheetID หรือ Credential ยังไม่ได้ตั้ง | ตั้ง Google Sheets credential + แทนค่า `REPLACE_WITH_SPREADSHEET_ID` + สร้าง sheet `Strategy_Decisions` |
 
 ---
 

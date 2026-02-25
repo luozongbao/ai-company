@@ -86,9 +86,9 @@
     {
       "parameters": {
         "name": "score_and_rank",
-        "description": "Calculate weighted scores for business models based on revenue potential, automation feasibility, time-to-revenue, and risk. Returns ranked list.",
+        "description": "Calculate weighted composite scores for a list of business models. Input must be a JSON string with a 'models' array. Each model needs: name (string), revenuePotential (number, monthly USD), automationFeasibility (1-10), timeToRevenue (months), riskScore (1-10). Returns a JSON string of models sorted by composite score descending.",
         "language": "javaScript",
-        "jsCode": "// Score business models\nconst models = JSON.parse($input.first().json.models || '[]');\nconst scored = models.map(m => ({\n  ...m,\n  compositeScore: (\n    (m.revenuePotential / 10000) * 0.35 +\n    (m.automationFeasibility / 10) * 0.35 +\n    (1 - m.timeToRevenue / 12) * 0.20 +\n    (1 - m.riskScore / 10) * 0.10\n  )\n}));\nscored.sort((a, b) => b.compositeScore - a.compositeScore);\nreturn { rankedModels: scored };"
+        "jsCode": "// toolCode must return a string — that string is what the AI reads as the tool result\nlet models = [];\ntry {\n  const raw = typeof $input === 'string' ? $input : JSON.stringify($input);\n  const parsed = JSON.parse(raw);\n  models = Array.isArray(parsed) ? parsed : (parsed.models || []);\n} catch (e) {\n  return 'Error: input must be a JSON string with a models array. Example: [{\"name\":\"...\",\"revenuePotential\":5000,\"automationFeasibility\":8,\"timeToRevenue\":2,\"riskScore\":3}]';\n}\n\nif (!models.length) {\n  return 'Error: models array is empty. Provide at least one business model to score.';\n}\n\nconst scored = models.map(m => ({\n  ...m,\n  compositeScore: parseFloat((\n    ((m.revenuePotential || 0) / 10000) * 0.35 +\n    ((m.automationFeasibility || 5) / 10) * 0.35 +\n    (1 - Math.min(m.timeToRevenue || 6, 12) / 12) * 0.20 +\n    (1 - (m.riskScore || 5) / 10) * 0.10\n  ).toFixed(4))\n}));\n\nscored.sort((a, b) => b.compositeScore - a.compositeScore);\n\n// Must return a string\nreturn JSON.stringify({ rankedModels: scored, top2: scored.slice(0, 2) }, null, 2);"
       },
       "id": "a1b2c3d4-0001-0001-0001-000000000006",
       "name": "Tool: Score & Rank",
@@ -136,30 +136,40 @@
     },
     {
       "parameters": {
-        "url": "={{ $env.N8N_HOST || 'http://localhost:5678' }}/webhook/strategy-result",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "strategy_result",
-              "value": "={{ $json.strategy_result }}"
-            },
-            {
-              "name": "timestamp",
-              "value": "={{ $json.timestamp }}"
-            }
-          ]
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Strategy_Decisions",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "status": "={{ $json.status }}",
+            "next_action": "={{ $json.next_action }}",
+            "strategy_result": "={{ $json.strategy_result }}"
+          }
         },
         "options": {}
       },
       "id": "a1b2c3d4-0001-0001-0001-000000000008",
       "name": "Save Strategy Decision",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
       "position": [1100, 300],
-      "continueOnFail": true
+      "continueOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
     },
     {
       "parameters": {
