@@ -93,15 +93,15 @@ docker run -it --rm \
 
 ใน n8n → Workflows → Import from File → import ตามลำดับ:
 
-| ไฟล์ | Workflow | ทริกเกอร์ | หน้าที่ |
-|------|----------|-----------|---------|
-| `00_SEED_Strategy.json` | Seed: Market Research | Manual (รันครั้งแรกครั้งเดียว) | วิเคราะห์ตลาด เลือกธุรกิจ |
-| `01_CEO_Orchestrator.json` | CEO Orchestrator | จันทร์ 07:00 | วางแผนรายสัปดาห์ |
-| `02_Marketing_Agent.json` | Marketing Agent | ทุกวัน 08:00 | สร้าง Content ทุกช่องทาง |
-| `03_Sales_Agent.json` | Sales Agent | ทุกวัน 09:00 | หาลูกค้า ส่ง Outreach |
-| `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | รายงานการเงินรายสัปดาห์ |
-| `05_SelfImprovement_Agent.json` | Self-Improvement Agent | อาทิตย์ 00:00 | Audit + เสนอการปรับปรุง |
-| `99_SHUTDOWN_Graceful.json` | Graceful Shutdown | Manual (ปิดระบบ) | ปิดทุก Agent + สรุปผล |
+| ไฟล์ | Workflow | ทริกเกอร์ | หน้าที่ | README |
+|------|----------|-----------|---------|--------|
+| `00_SEED_Strategy.json` | Seed: Market Research | Manual (รันครั้งแรกครั้งเดียว) | วิเคราะห์ตลาด เลือกธุรกิจ | [📄](00_SEED_Strategy_README.md) |
+| `01_CEO_Orchestrator.json` | CEO Orchestrator | จันทร์ 07:00 | วางแผนรายสัปดาห์ | [📄](01_CEO_Orchestrator_README.md) |
+| `02_Marketing_Agent.json` | Marketing Agent | ทุกวัน 08:00 | สร้าง Content ทุกช่องทาง | [📄](02_Marketing_Agent_README.md) |
+| `03_Sales_Agent.json` | Sales Agent | ทุกวัน 09:00 | หาลูกค้า ส่ง Outreach | [📄](03_Sales_Agent_README.md) |
+| `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | รายงานการเงินรายสัปดาห์ | [📄](04_Finance_Agent_README.md) |
+| `05_SelfImprovement_Agent.json` | Self-Improvement Agent | อาทิตย์ 00:00 | Audit + เสนอการปรับปรุง | [📄](05_SelfImprovement_Agent_README.md) |
+| `99_SHUTDOWN_Graceful.json` | Graceful Shutdown | Manual (ปิดระบบ) | ปิดทุก Agent + สรุปผล | [📄](99_SHUTDOWN_Graceful_README.md) |
 
 ### Step 4 — รัน Seed Workflow ก่อน
 Workflow แรกที่ต้องรัน: **"00_SEED_Strategy"**
