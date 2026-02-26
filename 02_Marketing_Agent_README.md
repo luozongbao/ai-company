@@ -1,4 +1,4 @@
-# 02 Marketing Agent — Daily Content Creation & Publishing
+# 02 Content Agent — Daily Blog, Social & Affiliate Publishing
 
 | Property | Value |
 |---|---|
@@ -11,7 +11,12 @@
 
 ## วัตถุประสงค์
 
-Marketing Agent สร้าง **content อัตโนมัติทุกวัน** สำหรับทุกช่องทาง ตั้งแต่ค้นหา trending topics จนถึง publish จริงผ่าน Buffer (Twitter/LinkedIn) และ Ghost (newsletter draft) โดยไม่ต้องมีมนุษย์ช่วย
+Content Agent สร้าง **content SEO + affiliate อัตโนมัติทุกวัน** — ตั้งแต่เลือก topic, เขียน blog post พร้อม affiliate links, สร้าง social posts, จนถึง publish ขึ้น Ghost + Buffer โดยไม่ต้องมีมนุษย์ช่วย
+
+**3 รายได้ที่ content นี้สร้าง:**
+- **Affiliate commission** — ลูกค้า click link ใน blog → ซื้อ tool → เราได้ commission
+- **Newsletter subscribers** — ทุก post มี CTA สมัคร newsletter paid $9/mo
+- **Product awareness** — mention digital products ที่ Product Agent สร้างไว้
 
 ---
 

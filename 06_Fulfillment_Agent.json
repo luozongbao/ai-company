@@ -1,0 +1,256 @@
+{
+  "name": "06 Fulfillment Agent — Auto-Deliver Digital Products on Purchase",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000001",
+      "name": "Webhook: Stripe Payment",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "stripe-payment-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "check-event-type",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "checkout.session.completed",
+              "operator": { "type": "string", "operation": "equals" }
+            },
+            {
+              "id": "check-payment-status",
+              "leftValue": "={{ $json.body.data.object.payment_status }}",
+              "rightValue": "paid",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000002",
+      "name": "Check: Is Paid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fulfill-ctx-001",
+              "name": "customer_email",
+              "value": "={{ $json.body.data.object.customer_email || $json.body.data.object.customer_details?.email }}",
+              "type": "string"
+            },
+            {
+              "id": "fulfill-ctx-002",
+              "name": "customer_name",
+              "value": "={{ $json.body.data.object.customer_details?.name || 'Valued Customer' }}",
+              "type": "string"
+            },
+            {
+              "id": "fulfill-ctx-003",
+              "name": "product_type",
+              "value": "={{ $json.body.data.object.metadata?.product_type || 'digital_product' }}",
+              "type": "string"
+            },
+            {
+              "id": "fulfill-ctx-004",
+              "name": "product_title",
+              "value": "={{ $json.body.data.object.metadata?.product_title || $json.body.data.object.display_items?.[0]?.custom?.name || 'Your Digital Product' }}",
+              "type": "string"
+            },
+            {
+              "id": "fulfill-ctx-005",
+              "name": "amount_paid",
+              "value": "={{ ($json.body.data.object.amount_total || 0) / 100 }}",
+              "type": "number"
+            },
+            {
+              "id": "fulfill-ctx-006",
+              "name": "session_id",
+              "value": "={{ $json.body.data.object.id }}",
+              "type": "string"
+            },
+            {
+              "id": "fulfill-ctx-007",
+              "name": "fulfillment_prompt",
+              "value": "=Customer {{ $json.body.data.object.customer_details?.name || 'Valued Customer' }} has purchased '{{ $json.body.data.object.metadata?.product_title || 'Your Digital Product' }}' (type: {{ $json.body.data.object.metadata?.product_type || 'digital_product' }}) for ${{ ($json.body.data.object.amount_total || 0) / 100 }}. Look up this product in the Product_Catalog, retrieve its content, and prepare a complete delivery email. The email must: (1) thank the customer, (2) deliver the full product content inline in the email body (no external links needed), (3) include helpful usage tips.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000003",
+      "name": "Extract Order Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.fulfillment_prompt }}",
+        "options": {
+          "systemMessage": "You are the Fulfillment Agent for an AI Content Media & Digital Products company. Your job is to deliver purchased digital products to customers instantly and professionally.\n\nWhen triggered:\n1. Read the product_type and product_title from the order context\n2. Use read_product_catalog tool to find the matching product content in Google Sheets\n3. If the product is found in catalog: use its content verbatim\n4. If not found: generate the product content from scratch based on title + type (do not leave customer waiting)\n5. Format the delivery email:\n   - Subject: 'Your [Product Title] is here! 🎉'\n   - Opening: Warm thank-you + what they bought\n   - Product delivery: Full content inline (all prompts, full guide, or full template)\n   - Usage tips: 3–5 specific tips on getting value from this product\n   - Upsell (soft): Mention our newsletter subscription for weekly AI tips\n   - Closing: Professional sign-off from 'The AI Automation Team'\n6. Use send_delivery_email tool to send the formatted email to the customer\n\nQuality standards:\n- Email must include the COMPLETE product (not a summary or partial)\n- Tone: professional, warm, helpful\n- Length: as long as needed to deliver the full product\n\nOutput JSON: { productFound, productTitle, emailSent, customerEmail, deliveryStatus }\n\nFORBIDDEN: Send incomplete products, use placeholder text, fail silently."
+        }
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000004",
+      "name": "Fulfillment Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [960, 200]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 4000
+        }
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000005",
+      "name": "OpenAI GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [740, 420],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "read_product_catalog",
+        "description": "Look up the digital product content from Google Sheets Product_Catalog. Search by product_title or product_type to find the generated product content ready for delivery.",
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_SPREADSHEET_ID/values/Product_Catalog",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000006",
+      "name": "Tool: Read Product Catalog",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [1180, 420]
+    },
+    {
+      "parameters": {
+        "name": "send_delivery_email",
+        "description": "Send the product delivery email to the customer via SendGrid. Provide JSON: { to_email, customer_name, product_title, subject, body_html }. The body_html should contain the complete product content formatted in HTML.",
+        "language": "javaScript",
+        "jsCode": "const params = $input.first().json;\nconst toEmail      = params.to_email || params.customer_email || '';\nconst customerName = params.customer_name || 'Valued Customer';\nconst productTitle = params.product_title || 'Your Digital Product';\nconst subject      = params.subject || `Your ${productTitle} is here! 🎉`;\nconst bodyHtml     = params.body_html || params.body || `<p>Thank you for your purchase of <strong>${productTitle}</strong>.</p><pre>${params.content || ''}</pre>`;\n\nif (!toEmail) throw new Error('send_delivery_email requires to_email field');\n\nconst fromEmail = $env.SENDGRID_FROM_EMAIL || '';\nconst fromName  = $env.COMPANY_NAME || 'AI Automation Team';\nconst apiKey    = $env.SENDGRID_API_KEY || '';\n\nif (!apiKey)    throw new Error('SENDGRID_API_KEY env var is not set');\nif (!fromEmail) throw new Error('SENDGRID_FROM_EMAIL env var is not set');\n\nconst htmlBody = `<!DOCTYPE html><html><body style=\"font-family:Arial,sans-serif;max-width:680px;margin:auto;padding:20px\">${bodyHtml}<hr/><p style=\"font-size:12px;color:#888\">You purchased ${productTitle}. Questions? Reply to this email.</p></body></html>`;\n\nconst payload = {\n  personalizations: [{ to: [{ email: toEmail, name: customerName }], subject }],\n  from: { email: fromEmail, name: fromName },\n  content: [{ type: 'text/html', value: htmlBody }]\n};\n\nawait this.helpers.httpRequest({\n  method: 'POST',\n  url: 'https://api.sendgrid.com/v3/mail/send',\n  headers: {\n    'Authorization': `Bearer ${apiKey}`,\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify(payload)\n});\n\nreturn { success: true, to: toEmail, subject, productTitle, sentAt: new Date().toISOString() };"
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000007",
+      "name": "Tool: Send Delivery Email",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [1400, 420]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Order_Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fulfilled_at": "={{ $now.toISO() }}",
+            "session_id": "={{ $('Extract Order Details').item.json.session_id }}",
+            "customer_email": "={{ $('Extract Order Details').item.json.customer_email }}",
+            "product_title": "={{ $('Extract Order Details').item.json.product_title }}",
+            "product_type": "={{ $('Extract Order Details').item.json.product_type }}",
+            "amount_paid": "={{ $('Extract Order Details').item.json.amount_paid }}",
+            "fulfillment_result": "={{ $json.output }}",
+            "status": "delivered"
+          }
+        },
+        "options": {}
+      },
+      "id": "f6g7h8i9-0007-0007-0007-000000000008",
+      "name": "Log to Order Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [1220, 200],
+      "continueOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook: Stripe Payment": {
+      "main": [
+        [{ "node": "Check: Is Paid?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check: Is Paid?": {
+      "main": [
+        [{ "node": "Extract Order Details", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Extract Order Details": {
+      "main": [
+        [{ "node": "Fulfillment Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fulfillment Agent": {
+      "main": [
+        [{ "node": "Log to Order Log", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI GPT-4o": {
+      "ai_languageModel": [
+        [{ "node": "Fulfillment Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Tool: Read Product Catalog": {
+      "ai_tool": [
+        [{ "node": "Fulfillment Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Tool: Send Delivery Email": {
+      "ai_tool": [
+        [{ "node": "Fulfillment Agent", "type": "ai_tool", "index": 1 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "meta": { "instanceId": "ai-company-v1" },
+  "tags": [
+    { "name": "fulfillment", "createdAt": "2026-02-25" },
+    { "name": "ecommerce", "createdAt": "2026-02-25" }
+  ],
+  "notes": "WEBHOOK-triggered (not scheduled). Active 24/7. When Stripe fires checkout.session.completed: (1) extract order, (2) look up product in Product_Catalog sheet, (3) AI generates delivery email with full product content, (4) SendGrid delivers to customer instantly, (5) logs to Order_Log. Setup: in Stripe Dashboard → Developers → Webhooks → add endpoint: https://YOUR_N8N_URL/webhook/stripe-webhook → event: checkout.session.completed. Required env vars: SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, COMPANY_NAME. Required sheets: Product_Catalog, Order_Log."
+}

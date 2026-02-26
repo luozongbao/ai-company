@@ -1,4 +1,4 @@
-# 00 SEED Strategy — Market Research & Business Selection
+# 00 SEED Strategy — Niche & Affiliate Research
 
 | Property | Value |
 |---|---|
@@ -11,7 +11,15 @@
 
 ## วัตถุประสงค์
 
-Workflow นี้คือ **จุดเริ่มต้นของทั้งระบบ** รันก่อน Workflow อื่นทุกตัว หน้าที่คือให้ Strategy Agent วิเคราะห์ตลาดธุรกิจ AI Automation แล้วเลือก **2 Business Model ที่ดีที่สุด** สำหรับระบบนี้ในการสร้างรายได้
+Workflow นี้คือ **จุดเริ่มต้นของทั้งระบบ** รันก่อน Workflow อื่นทุกตัว หน้าที่คือให้ Strategy Agent วิเคราะห์ตลาด AI automation content niche แล้วเลือก:
+
+1. **Content Niche** ที่เหมาะที่สุด (audience + affiliate commission + producibility)
+2. **Affiliate Programs** 8 อันดับที่มี commission สูงสุดในนั้น
+3. **Digital Product Ideas** 5 ชิ้นแรกที่ควรสร้าง
+4. **Newsletter Strategy** — ราคา tier, frequency, positioning
+5. **Content Calendar Seed** — themes + titles สำหรับ 4 สัปดาห์แรก
+
+Output ถูก save ลง `Strategy_Decisions` sheet ใน Google Sheets เพื่อให้ CEO + Content + Product Agent อ้างอิง
 
 ---
 

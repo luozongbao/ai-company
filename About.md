@@ -1,14 +1,63 @@
-# Project One Click Business
-ผมอยากรู้ว่า n8n workflow + ai จะสามารถสร้างอะไรได้แค่ไหน
+# Project: AI Content Media & Digital Products Company
 
-## Instruction
-ช่วยเขียน n8n workflow สำหรับองค์กรบริษัท โดยที่แต่ละแผนกมี AI Agent ทำงานล้วน ๆ (ส่วนเรื่องของ Model เดี๋ยวผมเพิ่มเองทีหลัง) เพิ่ม Tools ที่สำคัญของแต่ละแผนก ให้เรียบร้อย สร้างเฉพาะแผนกที่สำคัญจำเป็นในการสร้างความเติบโตให้บริษัท และให้บริษัทฟังก์ชันได้ด้วยตัวเอง (AI + Workflow) สามารถ พัฒนาหาเงินได้ และถ้าเป็นไปได้ก็สามารถ เช็คการทำงานของตัวเองว่าขาดตกตรงไหนบ้างและสามารถ เพิ่มพัฒนาการ workflow ทำงานของตัวเองได้ไปเรื่อย ๆ
+บริษัทที่ขับเคลื่อนด้วย AI + n8n Workflow 100% โดยไม่ต้องมีมนุษย์เข้ามา operate
 
-## Seed Workflow
-การทำงานอาจจะเริ่มตั้งแต่การหาว่าทำอะไรได้บ้าง ธุรกิจอะไรที่สามารถทำได้ให้ผลประโยชน์ดีที่สุด แล้วสร้างเป็นโมเดลธุรกิจ (Workflow) ของตัวเองออกมาและพัฒนาไปเรื่อย ๆ โดยที่ไม่ต้องมี Human in the loop โดยที่โมเดลธุรกิจที่เลือก
-1. เป็นไปได้จริง ด้วยการทำงานของ AI + n8n Workflow automation ล้วน ๆ
-2. ถูกต้องตามจริยธรรมและกฏหมาย ไม่ทำการค้ายาเสพติด ไม่มีการหลอกลวง ไม่มีการฆ่าหรือทำร้ายมนุษย์
-3. สามารถปิดการทำงานได้ ออกแบบขั้นตอนการปิดองค์กรณ์ปิดระบบได้ ไว้ด้วย 
+## Business Model
+
+บริษัทนี้หารายได้จาก **3 ช่องทางที่ AI ทำได้ครบ loop** โดยไม่ต้องมีคนเข้ามาแตะ:
+
+### 1. Content + Affiliate Marketing
+- AI เขียน blog post และ social content ทุกวัน
+- ฝัง affiliate link ของ AI tools (n8n, OpenAI, Hostinger, ฯลฯ)
+- ลูกค้า click link → ซื้อ → เราได้ commission โดยอัตโนมัติ
+
+### 2. Newsletter Subscription
+- AI เขียน newsletter เกี่ยวกับ AI automation ทุกสัปดาห์
+- เผยแพร่ผ่าน Ghost (free tier → paid subscription $9/เดือน)
+- รายได้เป็น recurring — สะสมทุกเดือน
+
+### 3. Digital Products (Auto-Delivered)
+- AI สร้าง prompt packs, n8n workflow templates, AI starter guides
+- ขายผ่าน Ghost/Stripe (one-time payment)
+- เมื่อลูกค้าจ่ายเงิน → Stripe webhook → AI generate product → SendGrid ส่ง email อัตโนมัติ
+- ไม่มีคนเข้ามาเลยตั้งแต่ต้นจนจบ
+
+## สาเหตุที่เลือก 3 Model นี้
+
+| เหตุผล | รายละเอียด |
+|---|---|
+| **AI ผลิตได้ 100%** | ไม่ต้องมีคนสร้างสินค้า — GPT-4o เขียน generate ได้ทั้งหมด |
+| **AI Deliver ได้ 100%** | Blog post, email, ไฟล์ดิจิทัล — ส่งผ่าน API ล้วนๆ |
+| **ไม่ต้องสต็อกสินค้า** | Digital product ไม่มี physical cost |
+| **Passive income** | Affiliate + subscription collect เงินแม้ไม่มีคนทำงาน |
+| **Scalable** | ยิ่ง publish มาก ยิ่ง traffic มาก ยิ่งรายได้มาก |
+
+## Workflow Architecture
+
+```
+00_SEED_Strategy        ← (Manual, ครั้งเดียว) เลือก niche + affiliate programs
+        ↓
+01_CEO_Orchestrator     ← (ทุกจันทร์) วางแผน topic + product ประจำสัปดาห์
+        ↓                       ↓
+02_Content_Agent    03_Product_Agent   ← ทำงานคู่กันทุกวัน/สัปดาห์
+(content daily)     (products weekly)
+        ↓                       ↓
+            [Ghost Blog + Social + Stripe Store]
+                        ↓
+            [ลูกค้าจ่ายเงิน → Stripe Webhook]
+                        ↓
+            06_Fulfillment_Agent  ← AI generate + deliver ทันที
+                        ↓
+            04_Finance_Agent      ← (ทุกศุกร์) P&L Report
+                        ↓
+            05_SelfImprovement    ← (ทุกอาทิตย์) Audit + improve
+```
+
+## กฎเหล็ก
+1. ทุก revenue ต้องเกิดขึ้นโดยไม่ต้องมีคน trigger
+2. ถูกต้องตามกฎหมาย — ไม่ spam, ไม่หลอกลวง, ไม่ทำร้าย
+3. ปิดระบบได้ทุกเวลาด้วย `99_SHUTDOWN_Graceful`
 
 ## เป้าหมาย
-n8n Workflow แรกที่ได้ผมจะทำไปลองรันใน Server ของผมทดสอบดู มาดูว่าถ้ารันไป 1 ปี n8n Workflow + AI นี้จะเติบโต และหารายได้ขนาดไหน รายได้ที่ได้สุดท้ายให้เป็นของผมทั้งหมด
+รัน server 1 ปี — ดูว่า AI content media company จะสร้าง passive income ได้เท่าไหร่
+รายได้ทั้งหมดเป็นของ owner

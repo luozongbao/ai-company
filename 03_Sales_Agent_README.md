@@ -1,188 +1,161 @@
-# 03 Sales Agent — Daily Lead Generation & Outreach
+﻿# 03 Product Agent  Weekly Digital Product Creation
 
-| Property | Value |
+ทกองคาร 09:00  AI วเคราะหความตองการตลาด แลวสราง digital product ใหม 1 ชน พรอม publish ขน Ghost เปน paid post
+
+---
+
+## Overview
+
+| รายละเอยด | คา |
 |---|---|
-| **File** | `03_Sales_Agent.json` |
-| **Trigger** | Schedule — ทุกวัน เวลา 09:00 |
-| **Version** | 1.1.0 |
-| **Status** | Activate หลังจาก `02_Marketing_Agent` ผ่าน QC อย่างน้อย 1 สัปดาห์แล้ว |
+| **Trigger** | ทกองคาร 09:00 (Weekly) |
+| **Agent** | Product Agent (GPT-4o, temp: 0.6) |
+| **Input** | วนท + week number |
+| **Output** | Digital product content + Ghost paid draft + Product_Catalog log |
+| **Runtime** | ~35 นาท |
 
 ---
 
-## วัตถุประสงค์
-
-Sales Agent ทำหน้าที่ **หาลูกค้าใหม่และส่ง outreach อัตโนมัติ** ทุกวัน เป้าหมาย 10 leads/วัน ผ่านการค้นหาบน Reddit, Twitter, LinkedIn แล้วเขียน email ที่ personalised และส่งผ่าน SendGrid โดยทุก message ต้องเป็น value-first ไม่ใช่ spam
-
----
-
-## การทำงาน (Node-by-Node Flow)
+## Node Flow
 
 ```
-Schedule Trigger (ทุกวัน 09:00)
-    │
-    ▼
-Set Sales Context
-    │  กำหนด sales_prompt, target_leads_count = 10
-    ▼
-Sales Agent  ←── OpenAI GPT-4o (temp: 0.5, max 3500 tokens)
-    │         ←── Sales Memory (session: "sales_agent_memory")
-    │         ←── Tool: Find Leads (Brave Search — site:reddit.com, freshness: pw)
-    │         ←── Tool: Send Email (toolCode → SendGrid API)
-    │         ←── Tool: CRM History (Google Sheets → CRM sheet)
-    │
-    │  Output JSON: leadsFound, outreachMessages, followUps, dailySummary
-    ▼
-Log to CRM Sheet (Google Sheets → CRM)
-    │  บันทึก: date, daily_summary, leads_found count, outreach_sent count
-    ▼
-[จบ — Sales Agent จะ call Tool: Send Email ระหว่าง agent loop]
+Schedule: Every Tuesday 9am
+        
+Set Product Context  (product_prompt + week_number)
+        
+Product Agent  Tool: Market Research (Brave Search)
+             Tool: Publish to Ghost (paid post draft)
+             Tool: Read Product Catalog (avoid duplicates)
+        
+Save to Product Catalog (Google Sheets)
 ```
 
 ---
 
-## Tools ที่ใช้
+## Tools ท Agent ใช
 
-| Tool | ประเภท | หน้าที่ |
+| Tool | ชนด | หนาท |
 |---|---|---|
-| `find_leads` | HTTP (Brave Search) | ค้นหา lead บน Reddit/Twitter — freshness: past week, count: 15 |
-| `send_outreach_email` | Code (toolCode) | ส่ง email จริงผ่าน SendGrid API (อ่าน from-address จาก env vars) |
-| `check_crm_history` | HTTP (Google Sheets API) | ตรวจว่าเคย contact prospect คนนี้ไปแล้วหรือยัง — ป้องกัน duplicate |
+| `Tool: Market Research` | HTTP (Brave Search) | คนหา AI automation pain points + trending products สปดาหน |
+| `Tool: Publish to Ghost` | toolCode (Ghost Admin API) | สราง paid post draft พรอม product content |
+| `Tool: Read Product Catalog` | HTTP (Google Sheets API) | อาน catalog เพอหลกเลยงสราง product ซำ |
 
 ---
 
-## Services ที่ขาย (ตามที่กำหนดใน system prompt)
+## Product Types ท Agent สราง (หมนเวยน)
 
-| Service | ราคา |
+| Product Type | เนอหา | ราคาแนะนำ |
+|---|---|---|
+| **Prompt Pack** | 3050 prompts สำหรบ GPT-4o ตาม use case เฉพาะ | $9$19 |
+| **n8n Workflow Template** | JSON workflow + setup guide สำหรบ automation งาน | $19$29 |
+| **AI Starter Guide** | คมอ 1,5002,500 คำ วธใช AI สำหรบงานเฉพาะ | $9$19 |
+| **Automation Checklist** | Checklist + resources สำหรบ automate business process | $9 |
+
+---
+
+## Input / Output
+
+**Input (Set Product Context):**
+```json
+{
+  "product_prompt": "Today is Tuesday, March 4 2026. Research what AI automation digital products people are looking for...",
+  "product_week": 10
+}
+```
+
+**Output (Agent JSON):**
+```json
+{
+  "productType": "prompt_pack",
+  "title": "50 ChatGPT Prompts for Freelance Writers",
+  "subtitle": "Save 10+ hours per week with AI-assisted writing",
+  "price": 19,
+  "description": "A curated collection of 50 production-ready GPT-4o prompts...",
+  "content": "[Full prompt pack content  all 50 prompts with explanations]",
+  "deliveryFormat": "markdown",
+  "ghostPostReady": true,
+  "weekNumber": 10,
+  "demandSignal": "Reddit r/freelance: multiple posts requesting writing automation this week"
+}
+```
+
+---
+
+## Google Sheets
+
+**Product_Catalog** (columns ท Agent เขยน):
+| Column | คา |
 |---|---|
-| n8n Workflow Setup | $500–2,000/project |
-| AI Agent Monthly Retainer | $300–1,000/month |
-| Content Automation Package | $200–500/month |
-| Custom Automation Consulting | $150/hour |
+| `created_at` | ISO timestamp |
+| `week_number` | เลขสปดาห |
+| `product_result` | JSON output ทงหมด |
+| `status` | `draft` |
+
+> **หมายเหต:** Fulfillment Agent (06) อาน `product_result` จาก sheet นเมอตอง deliver ใหลกคา
 
 ---
 
-## Environment Variables ที่ต้องตั้ง (สำคัญมาก)
+## Credentials ทตองตง
 
-| Variable | ค่า | หน้าที่ |
+| Credential | Node | วธตง |
 |---|---|---|
-| `SENDGRID_API_KEY` | API key จาก SendGrid | ใช้ในการส่ง email จริง |
-| `SENDGRID_FROM_EMAIL` | verified sender email ของคุณ | ปรากฏใน From field |
-| `COMPANY_NAME` | ชื่อบริษัท/แบรนด์ | ปรากฏใน From name |
+| OpenAI API | `OpenAI GPT-4o` | n8n  Credentials  OpenAI API |
+| Google Sheets OAuth2 | `Save to Product Catalog`, `Tool: Read Product Catalog` | n8n  Credentials  Google Sheets |
+| Brave Search Header Auth | `Tool: Market Research` | HTTP Header Auth: `X-Subscription-Token`  ด [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 
-> ตั้งที่: n8n → Settings → Environment Variables
->
-> 📄 **ดู setup guide ฉบับเต็ม:** [SETUP_SendGrid.md](SETUP_SendGrid.md)
-
----
-
-## Credentials ที่ต้องตั้ง
-
-| Credential | ใช้ที่ | วิธีตั้ง |
-|---|---|---|
-| OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
-| Google Sheets OAuth2 | `Tool: CRM History`, `Log to CRM Sheet` | n8n → Credentials → Google Sheets OAuth2 |
-| Brave Search Header Auth | `Tool: Find Leads` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
-
----
-
-## Google Sheets CRM Structure
-
-สร้าง sheet ชื่อ `CRM` ใน Spreadsheet พร้อม columns:
-
-| Column | ข้อมูล |
+**Environment Variables:**
+| Variable | คา |
 |---|---|
-| `date` | วันที่ log |
-| `daily_summary` | JSON output จาก Sales Agent |
-| `leads_found` | จำนวน leads ที่หาได้ |
-| `outreach_sent` | จำนวน email ที่ส่ง |
+| `GHOST_API_URL` | `https://your-ghost-blog.com` |
+| `GHOST_ADMIN_API_KEY` | Ghost  Settings  Integrations  Create Custom Integration |
 
 ---
 
-## วิธีการใช้งาน
+## วธใชงาน
 
-1. **ตั้ง env vars ก่อน** (`SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`, `COMPANY_NAME`)
-2. ตั้ง credentials (OpenAI, Google Sheets, Brave)
-3. สร้าง `CRM` sheet ใน Spreadsheet
-4. **Verify sender email** ใน SendGrid dashboard ก่อน activate (สำคัญมาก — ไม่เช่นนั้นส่ง email ไม่ได้)
-5. Execute manual ครั้งแรก — **ตรวจดู outreach messages ก่อน activate**
-6. ถ้า message quality ดี → Activate workflow
+### ครงแรก
+1. ตง env vars `GHOST_API_URL` + `GHOST_ADMIN_API_KEY`
+2. ตง Brave Search credential
+3. สราง sheet `Product_Catalog` ใน Spreadsheet (columns: created_at, week_number, product_result, status)
+4. แทน `REPLACE_WITH_SPREADSHEET_ID` ดวย Spreadsheet ID จรง
+5. Activate workflow
 
-> ⚠️ **คำเตือน:** ตรวจ `leadsFound` และ `outreachMessages` ใน output ก่อน activate เพื่อให้แน่ใจว่า Agent ไม่ส่ง spam
-
----
-
-## ตัวอย่าง Outreach Email ที่ดี (ที่ Agent ควร generate)
-
-```
-Subject: Quick automation idea for your business
-
-Hi [Name],
-
-Saw your post about spending hours on manual data entry —
-that's exactly what AI automation solves.
-
-Here's one free tip: n8n + a simple webhook can cut that
-process from 2 hours to 5 minutes automatically.
-
-Happy to walk you through the full setup — no pitch, just help.
-Worth a 15-min chat?
-
-Best,
-[COMPANY_NAME]
-```
+### Ghost Setup สำหรบ Product Posts
+1. Ghost Dashboard  Settings  Integrations  **Add custom integration**
+2. ชอ: "n8n Product Agent"
+3. Copy **Admin API Key**
+4. ตง Stripe membership tier ใน Ghost ($9/mo หรอ one-time price)
 
 ---
 
-## การทำงานร่วมกับ Workflow อื่น
+## ความสมพนธกบ Workflow อน
 
 ```
-02_Marketing_Agent
-    │  สร้าง content → build credibility → ทำให้ lead อยากตอบ outreach
-    ▼
-03_Sales_Agent
-    │  อ่าน CRM history (ไม่ส่ง duplicate)
-    │  ส่ง outreach → รอ reply จาก prospect
-    │  บันทึก results ลง CRM sheet
-    ▼
-04_Finance_Agent
-    │  ดึงรายได้จาก Stripe ที่มาจาก closed deals
-    ▼
-05_SelfImprovement_Agent
-    │  วิเคราะห์ leads_found trend, outreach_sent vs deals closed
-    │  เสนอปรับ target คุณลักษณะ lead หรือ offer
+01_CEO_Orchestrator   กำหนด product direction สปดาหน (CEO วางแผนจนทร, Product Agent ทำองคาร)
+02_Content_Agent      promote products ใหมใน blog posts + social
+06_Fulfillment_Agent  อาน Product_Catalog เมอตอง deliver ใหลกคา
+04_Finance_Agent      track product sales revenue ใน Stripe
+05_SelfImprovement    audit product quality + suggest improvements
 ```
-
----
-
-## Audit Checklist (ดูทุกสัปดาห์)
-
-- [ ] `CRM` sheet มี record ใหม่ทุกวัน
-- [ ] `leads_found` เฉลี่ย ≥ 5/วัน (ถ้าต่ำกว่า: ปรับ search query)
-- [ ] `outreach_sent` ≥ 1/วัน (ถ้าเป็น 0: ตรวจ SendGrid connection)
-- [ ] ไม่มี duplicate เลข email เดิมใน CRM ติดกัน 2 วัน
-- [ ] outreach messages ใน daily_summary ไม่ใช่ generic template
-- [ ] SendGrid dashboard: bounce rate < 5%, spam report = 0
 
 ---
 
 ## Troubleshooting
 
-| ปัญหา | สาเหตุ | วิธีแก้ |
+| ปญหา | สาเหต | วธแก |
 |---|---|---|
-| Email ไม่ส่ง / error 403 | `SENDGRID_FROM_EMAIL` ไม่ได้ verify | SendGrid → Sender Authentication → verify domain/email |
-| `leads_found` = 0 ทุกวัน | Brave Search ไม่พบ results | ปรับ search query ใน `find_leads` tool description |
-| Email ถูก flag เป็น spam | From domain ไม่มี SPF/DKIM | ตั้ง DNS records ตาม SendGrid guide |
-| `SENDGRID_API_KEY not set` error | env var ไม่ได้ตั้ง | n8n → Settings → Environment Variables → เพิ่ม key |
-| CRM มี lead ซ้ำ | `check_crm_history` ไม่ match correctly | ตรวจ sheet structure ว่ามี column ที่ใช้ match ครบ |
+| Ghost API 401 | Admin API Key ผดหรอหมดอาย | Ghost  Settings  Integrations  regenerate key |
+| Ghost API 422 | HTML format ไมถกตอง | ตรวจ html_content ใน toolCode output |
+| Product content ซำกบสปดาหกอน | Read Catalog tool ไมทำงาน | ตรวจ Google Sheets credential + SPREADSHEET_ID |
+| Brave Search ไมมผล | API key หมด quota | ตรวจ api.search.brave.com dashboard |
 
 ---
 
-## Human Support — สิ่งที่คุณต้องทำ
+## Human Review Checklist
 
-| ความถี่ | งาน | เวลา |
-|---|---|---|
-| **ทุกวัน (ช่วงแรก)** | ตรวจ CRM sheet ดู outreach quality + รับ reply จาก prospect ด้วยตัวเอง | 10–15 นาที |
-| **ทุกสัปดาห์** | ดู conversion rate: leads → reply → deal | 10 นาที |
-| **เมื่อมี reply** | **ตอบ reply เองหรือ setup email auto-responder** (Agent ส่งครั้งแรกได้ แต่ follow-up conversation ยังต้องมนุษย์) | ตามสถานการณ์ |
-| **รายเดือน** | Review SendGrid deliverability report | 10 นาที |
-| **ถ้าถูก block/ban** | หยุด workflow ทันที → ตรวจสอบปัญหา → แก้ system prompt | เมื่อพบ |
+หลง Product Agent รนทกองคาร:
+- [ ] เปด Ghost Dashboard  Review draft post ทสราง
+- [ ] ตรวจวา product content ครบถวน ไมใช placeholder
+- [ ] ตรวจ price ท Agent กำหนด  สมเหตสมผลกบเนอหา?
+- [ ] Publish Ghost post (change status: draft  published) เมอ approve แลว
+- [ ] อปเดต `status` ใน Product_Catalog sheet จาก `draft`  `published`

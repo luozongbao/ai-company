@@ -12,12 +12,16 @@
 ## วัตถุประสงค์
 
 Self-Improvement Agent คือ **ระบบภูมิคุ้มกันของบริษัท** ทำงานทุกสัปดาห์เพื่อ:
-- Audit health ของทุก workflow (error rate, execution time, failures)
-- วิเคราะห์ KPI performance ทุกแผนก
+- Audit health ของทุก workflow: Content Agent, Product Agent, Fulfillment Agent, Finance, CEO
+- วิเคราะห์ KPI performance: page views, newsletter subscribers, product sales, affiliate clicks
+- ตรวจ content quality: affiliate links per post, keyword optimization, CTA effectiveness
+- ตรวจ product quality: completeness, pricing, duplicate detection
 - หา system gaps ที่ยังไม่ได้ทำ
 - เสนอ improvement proposals แบบ prioritized (Priority 1/2/3)
 - ค้นหา AI tools ใหม่ที่อาจเป็นประโยชน์
 - Review business model — grow, maintain, หรือ pivot
+
+> **ขอบเขต v2.0:** ระบบนี้ audit 3 revenue streams: Affiliate, Newsletter Subscription, Digital Products
 
 Output ทั้งหมดบันทึกลง `Improvement_Log` sheet รอ **human review** ก่อน apply
 

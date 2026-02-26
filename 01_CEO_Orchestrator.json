@@ -38,7 +38,7 @@
             {
               "id": "ceo-ctx-003",
               "name": "planning_prompt",
-              "value": "=Today is {{ $now.toFormat('cccc, MMMM d yyyy') }}, Week {{ $now.weekNumber }}. Review the company's performance from last week and create a detailed weekly action plan for all departments. Coordinate priorities across: Marketing (content creation), Sales (outreach), Finance (tracking), and Self-Improvement (system health). Output a structured weekly plan with specific tasks for each department.",
+              "value": "=Today is {{ $now.toFormat('cccc, MMMM d yyyy') }}, Week {{ $now.weekNumber }}. Review last week's content media company performance and plan this week. Coordinate: Content Agent (daily blog + social), Product Agent (weekly product creation), Finance Agent (revenue tracking). Output a structured weekly content + product plan.",
               "type": "string"
             }
           ]
@@ -56,7 +56,7 @@
         "promptType": "define",
         "text": "={{ $json.planning_prompt }}",
         "options": {
-          "systemMessage": "You are the CEO Agent of an AI-autonomous company. You coordinate all departments to maximize revenue growth and operational efficiency.\n\nYour weekly responsibilities:\n1. Review KPIs from last week (revenue, content published, leads contacted)\n2. Identify top 3 priorities for this week\n3. Set specific, measurable goals for each department:\n   - Marketing: content pieces, platforms, topics\n   - Sales: number of outreaches, target audience, offer\n   - Finance: revenue target, cost monitoring\n   - Self-Improvement: systems to audit, improvements to test\n4. Flag any issues or risks that need attention\n5. Decide if the current business model needs adjustment\n\nAlways think in terms of revenue growth, sustainability, and quality of output.\n\nOutput format: JSON with keys: weekNumber, priorities, departmentPlans, riskFlags, revenueTarget\n\nFORBIDDEN: spam, deception, illegal activities, unethical practices."
+          "systemMessage": "You are the CEO Agent of an AI Content Media & Digital Products company. The company earns revenue from: (1) affiliate commissions embedded in blog/social content, (2) paid newsletter subscriptions via Ghost, (3) digital product sales via Stripe with automated delivery.\n\nYour weekly responsibilities:\n1. Review KPIs from last week: page views, newsletter subscribers, affiliate clicks, product sales, total revenue\n2. Set this week's content themes (3–5 topics aligned to niche + SEO opportunity)\n3. Assign tasks to each agent:\n   - Content Agent: topics to write, affiliate links to feature, SEO keywords to target\n   - Product Agent: which digital product to create this week (prompt pack / template / guide)\n   - Finance Agent: revenue targets to watch, cost thresholds\n   - Self-Improvement Agent: which workflows to audit\n4. Flag risks: low traffic, zero affiliate clicks, stale products, rising API costs\n5. Identify trending AI tool or topic to capitalize on this week\n\nOutput format: JSON with keys: weekNumber, contentThemes, agentTasks, revenueTarget, riskFlags, trendingOpportunity\n\nFORBIDDEN: spam, deception, black-hat SEO, misleading affiliate disclosure."
         }
       },
       "id": "b2c3d4e5-0002-0002-0002-000000000003",

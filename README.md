@@ -1,642 +1,333 @@
-# AI Company — One Click Business
-> **Project Vision:** บริษัทที่ขับเคลื่อนด้วย AI Agent + n8n Workflow 100% สามารถหารายได้ พัฒนาตัวเอง และดำเนินธุรกิจได้โดยไม่ต้องมี Human in the loop
+# AI Content Media & Digital Products Company
+> **Project Vision:** บริษัทที่ขับเคลื่อนด้วย AI + n8n Workflow 100% สร้าง passive income จาก content, newsletter, และ digital products โดยไม่ต้องมีมนุษย์ operate
 
 ---
 
-## Feasibility Assessment ✅
+## Business Model
 
-| ความสามารถ | เป็นไปได้? | หมายเหตุ |
-|---|---|---|
-| AI Agent แต่ละแผนกทำงานอัตโนมัติ | ✅ | n8n AI Agent node + LLM |
-| Seed Workflow หาธุรกิจที่เหมาะสม | ✅ | Web research + LLM analysis |
-| สร้าง Workflow ธุรกิจใหม่ได้เอง | ✅ | n8n API + Code generation |
-| Self-assessment & self-improvement | ✅ | Monitoring + feedback loop |
-| หารายได้จริง (Freelance, SaaS, Content) | ✅ | ต้องมี payment gateway |
-| ไม่ผิดจริยธรรม / กฎหมาย | ✅ | กำหนด guardrails ไว้ใน system prompt |
-| ปิดระบบได้ทุกเวลา | ✅ | Kill-switch workflow |
+บริษัทนี้หารายได้จาก **3 ช่องทางที่ AI ทำได้ครบ loop** — ตั้งแต่ผลิตจนถึง collect เงิน โดยไม่ต้องมีคนแตะเลย:
 
----
+| # | Revenue Stream | รายได้ประมาณ/เดือน | AI ทำได้ 100%? |
+|---|---|---|---|
+| 1 | **Affiliate Marketing** ฝังใน blog/social content | $200–2,000 | ✅ AI เขียน + publish + ฝัง link |
+| 2 | **Newsletter Subscription** (Ghost paid tier $9/mo) | $500–5,000 | ✅ AI เขียน + Ghost publish อัตโนมัติ |
+| 3 | **Digital Products** (prompt packs, n8n templates, AI guides) | $300–3,000 | ✅ AI สร้าง + Stripe + AI deliver ทางอีเมล |
 
-## Organization Architecture
-
-```
-CEO Agent (Orchestrator)
-├── Strategy Agent          ← วิเคราะห์ตลาด, ตัดสินใจทิศทางธุรกิจ
-├── Operations Agent        ← ควบคุมการทำงานภายใน, จัดการ Workflow
-├── Marketing Agent         ← สร้าง Content, SEO, Social Media, Email
-├── Sales Agent             ← Lead gen, Outreach, Follow-up
-├── Product/Dev Agent       ← สร้างผลิตภัณฑ์ / Service deliverable
-├── Finance Agent           ← ติดตามรายได้, จัดการค่าใช้จ่าย, รายงาน
-├── HR/Talent Agent         ← (เฟส 2) Hire freelancers, manage outsource
-└── Self-Improvement Agent  ← Monitor KPI, audit workflow, propose upgrades
-```
+**ทำไมถึงเลือก 3 model นี้?**
+- ไม่ต้องสต็อกสินค้า — ไม่มี physical goods
+- AI ผลิตสินค้าได้ (GPT-4o เขียน/generate ทุกอย่าง)
+- AI deliver ได้ (Ghost, Buffer, SendGrid ทำงานผ่าน API)
+- รายได้ passive — เงินเข้าแม้ระบบไม่ได้กำลัง "ทำงาน"
 
 ---
 
-## 🗺️ Overall System — ภาพรวมการทำงานร่วมกันของทุก Workflow
-
-### ภาพรวมระบบทั้งหมด
+## 🗺️ Overall System Architecture
 
 ```
-                        ┌─────────────────────────────────────────────────────┐
-                        │              Human Owner (คุณ)                      │
-                        │  ตั้งค่าครั้งแรก / Monitor / Apply improvements     │
-                        └──────────┬───────────────────────┬──────────────────┘
-                                   │ (setup ครั้งเดียว)    │ (weekly review)
-                                   ▼                       ▼
-                        ┌─────────────────┐    ┌────────────────────────────┐
-                        │  00_SEED        │    │  05_SelfImprovement        │
-                        │  Strategy       │    │  (ทุกอาทิตย์ 00:00)        │
-                        │  (Manual, 1x)   │    │  Audit → Propose changes   │
-                        └────────┬────────┘    └────────────────────────────┘
-                                 │ เลือก Business Model                    ▲
-                                 ▼                                         │ อ่าน logs ทั้งหมด
-                        ┌─────────────────────────────────────────┐       │
-                        │           01_CEO_Orchestrator            │       │
-                        │           (ทุกจันทร์ 07:00)             │       │
-                        │  อ่าน KPI → วางแผนรายสัปดาห์ทุกแผนก   │       │
-                        └──────┬────────────────────┬─────────────┘       │
-                               │                    │                      │
-                    ┌──────────┘                    └──────────┐           │
-                    ▼                                          ▼           │
-          ┌──────────────────┐                      ┌──────────────────┐  │
-          │  02_Marketing    │                      │  03_Sales        │  │
-          │  (ทุกวัน 08:00) │                      │  (ทุกวัน 09:00) │  │
-          │  Research →      │                      │  Find Leads →    │  │
-          │  Create Content  │                      │  Write Outreach  │  │
-          │  → Buffer/Ghost  │                      │  → Send Email    │  │
-          └──────────────────┘                      └─────────┬────────┘  │
-                    │                                         │            │
-                    │  traffic / brand awareness              │ deals won  │
-                    └──────────────┐      ┌──────────────────┘            │
-                                   ▼      ▼                               │
-                        ┌─────────────────────────────────────────┐       │
-                        │           04_Finance_Agent               │       │
-                        │           (ทุกศุกร์ 18:00)              │       │
-                        │  Stripe revenue + OpenAI costs           │       │
-                        │  → Weekly P&L → Update KPI Dashboard    │       │
-                        └─────────────────────────────────────────┘       │
-                                          │                                │
-                                          │ KPI_Dashboard updated         │
-                                          └───────────────────────────────┘
+Human Owner (คุณ)
+  Setup ครั้งแรก / Weekly 30-min Review
 
-                        ┌─────────────────────────────────────────┐
-                        │           99_SHUTDOWN (Manual)           │
-                        │  Final report → Deactivate all → Stop   │
-                        └─────────────────────────────────────────┘
+        ↓
+  00_SEED_Strategy    ← Manual (รันครั้งเดียว)
+  วิเคราะห์ niche + affiliate + product lineup
+
+        ↓
+  01_CEO_Orchestrator (ทุกจันทร์ 07:00)
+  วางแผน content themes + product ประจำสัปดาห์
+
+        ↓                        ↓
+02_Content_Agent         03_Product_Agent
+(ทุกวัน 08:00)           (ทุกอังคาร 09:00)
+Blog + Social +          สร้าง digital
+Affiliate links          product ใหม่
+
+        ↓                        ↓
+     Ghost + Buffer          Ghost paid post
+     Affiliate revenue       Product_Catalog
+
+             [ลูกค้าจ่ายเงิน Stripe]
+                      ↓
+        06_Fulfillment_Agent (Stripe Webhook 24/7)
+        AI fetch product → SendGrid deliver ทันที
+
+                      ↓
+        04_Finance_Agent (ทุกศุกร์ 18:00)
+        P&L: Stripe + affiliate + OpenAI costs
+
+                      ↓
+        05_SelfImprovement (ทุกอาทิตย์ 00:00)
+        Audit + propose improvements
+
+  99_SHUTDOWN_Graceful (Manual)
+  Emergency kill-switch
 ```
 
 ---
 
-### วงจรรายสัปดาห์ (Weekly Operational Cycle)
-
-```
-วันจันทร์                     อังคาร–พฤหัส                   ศุกร์                 อาทิตย์
-────────────────────────────────────────────────────────────────────────────────────────▶ เวลา
-
-07:00  CEO วางแผน             08:00  Marketing สร้าง           18:00  Finance          00:00  Self-
-       ↓                            content ทุกวัน                    รายงาน           Improvement
-       อ่าน KPI จาก           09:00  Sales หาลูกค้า                   P&L              audit ระบบ
-       สัปดาห์ก่อน                   ส่ง outreach ทุกวัน              ↓                ↓
-       ↓                                                              อัปเดต           เสนอ
-       ส่งทิศทาง                                                      KPI              Priority 1–3
-       ให้แต่ละ                                                        Dashboard        improvements
-       แผนก                                                            ↓
-                                                                      CEO อ่าน
-                                                                      จันทร์หน้า
-```
-
----
-
-### Data Flow — ข้อมูลไหลระหว่าง Workflow อย่างไร
-
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         Google Sheets (ศูนย์กลางข้อมูล)                     │
-│                                                                              │
-│  KPI_Dashboard ◄─── Finance Agent (เขียน)                                   │
-│  KPI_Dashboard ───► CEO Agent (อ่าน)                                         │
-│  KPI_Dashboard ───► Self-Improvement Agent (อ่าน)                            │
-│                                                                              │
-│  Weekly_Plans  ◄─── CEO Agent (เขียน)                                        │
-│                                                                              │
-│  Content_Log   ◄─── Marketing Agent (เขียน)                                  │
-│  Error_Log     ◄─── Marketing Agent (เขียน เมื่อ fail)                       │
-│                                                                              │
-│  CRM           ◄─── Sales Agent (เขียน)                                      │
-│  CRM           ───► Sales Agent (อ่าน — ตรวจ duplicate)                      │
-│                                                                              │
-│  Financial_Reports ◄─── Finance Agent (เขียน)                                │
-│  Financial_Reports ───► Self-Improvement Agent (อ่าน)                        │
-│  Financial_Reports ───► Shutdown Agent (อ่าน)                                │
-│                                                                              │
-│  Improvement_Log ◄─── Self-Improvement Agent (เขียน)                         │
-│  Shutdown_Log    ◄─── Shutdown Agent (เขียน)                                 │
-└──────────────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         External Services                                    │
-│                                                                              │
-│  Brave Search API ◄─── Marketing, Sales, CEO, Seed, Self-Improvement        │
-│  OpenAI GPT-4o    ◄─── ทุก Workflow                                          │
-│  Stripe API       ◄─── Finance Agent (อ่าน revenue)                          │
-│  SendGrid         ◄─── Sales Agent (ส่ง email)                               │
-│  Buffer API       ◄─── Marketing Agent (post Twitter/LinkedIn)               │
-│  Ghost Admin API  ◄─── Marketing Agent (สร้าง newsletter draft)              │
-│  n8n Admin API    ◄─── Self-Improvement (อ่าน execution logs)                │
-│                   ◄─── Shutdown (deactivate workflows)                       │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Revenue Loop — วงจรสร้างรายได้
-
-```
-                    ┌─────────────────────────────────┐
-                    │         Revenue Loop             │
-                    └─────────────────────────────────┘
-
-  Marketing Agent                Sales Agent               Finance Agent
-  สร้าง Content ──────────────► หาลูกค้า ───────────────► ติดตาม Stripe
-  ทุกวัน 08:00                  ทุกวัน 09:00               ทุกศุกร์ 18:00
-       │                              │                          │
-       │  build                       │  ส่ง email               │  สรุป P&L
-       │  credibility                 │  ที่ reference           │
-       │                              │  content ของเรา          │
-       │ ◄────── social proof ────────┘                          │
-       │                                                          │
-       │                         Stripe receives payment          │
-       │                         ───────────────────────────────►│
-       │                                                          │
-       │                         รายงาน revenue ────────────────►│
-       │                                                          ▼
-       │                                               CEO วางแผนสัปดาห์ถัดไป
-       │                                               ปรับ target ตาม revenue
-       │◄──────────────── ปรับ content strategy ─────────────────┘
-```
-
----
-
-### Self-Improvement Loop — วงจรพัฒนาตัวเอง
-
-```
-                    ทุกสัปดาห์ (อาทิตย์ 00:00)
-
-  n8n Execution     Google Sheets       Brave Search
-  Logs (API)   ──┐  KPI_Dashboard ──┐  (new tools) ──┐
-                 │                  │                  │
-                 └──────────────────┴──────────────────┘
-                                    │
-                                    ▼
-                       Self-Improvement Agent
-                       วิเคราะห์ + เสนอ proposals
-                                    │
-                    ┌───────────────┼───────────────┐
-                    ▼               ▼               ▼
-               Priority 1      Priority 2      Priority 3
-               ทำสัปดาห์นี้    ทำเดือนหน้า    Future backlog
-                    │
-                    ▼
-               Human Review (คุณ)
-               ตรวจ → Approve → Apply ใน n8n
-                    │
-                    ▼
-               Workflows ดีขึ้น → Revenue เพิ่ม → Loop ใหม่
-```
-
----
-
-### Timeline — สิ่งที่เกิดขึ้นในแต่ละวัน
+## Weekly Operational Cycle
 
 | เวลา | Workflow | สิ่งที่เกิดขึ้น |
 |---|---|---|
-| จันทร์ 07:00 | CEO Orchestrator | อ่าน KPI → วางแผนสัปดาห์ → บันทึก Weekly_Plans |
-| ทุกวัน 08:00 | Marketing Agent | ค้นหา trends → สร้าง content → Buffer schedule + Ghost draft |
-| ทุกวัน 09:00 | Sales Agent | ค้นหา leads → เขียน outreach → ส่ง email → บันทึก CRM |
-| ศุกร์ 18:00 | Finance Agent | ดึง Stripe + OpenAI costs → P&L report → อัปเดต KPI Dashboard |
-| อาทิตย์ 00:00 | Self-Improvement | audit ทุก workflow → เสนอ improvements → บันทึก Improvement_Log |
-| เมื่อใดก็ได้ | Shutdown (manual) | ปิดทุก workflow → final report → deactivate |
+| จันทร์ 07:00 | CEO Orchestrator | อ่าน KPI → กำหนด content themes + product ประจำสัปดาห์ |
+| ทุกวัน 08:00 | Content Agent | Research → เขียน blog + affiliate links → publish Ghost + Buffer |
+| อังคาร 09:00 | Product Agent | Research demand → สร้าง digital product → Ghost paid post + log Catalog |
+| ตลอด 24/7 | Fulfillment Agent | รับ Stripe webhook → fetch product → SendGrid deliver ทันที |
+| ศุกร์ 18:00 | Finance Agent | Stripe + affiliate + OpenAI costs → P&L → KPI Dashboard |
+| อาทิตย์ 00:00 | Self-Improvement | Audit workflows → เสนอ improvements → log Improvement_Log |
 
 ---
 
-### Dependency Map — Workflow ไหนขึ้นอยู่กับ Workflow ไหน
+## Data Flow — Google Sheets เป็นศูนย์กลาง
 
 ```
-00_SEED ──────────────────────────────────────────────────────────────► ต้องรันก่อนทุกอย่าง
-                │
-                └──► 01_CEO ──────────────────────────────────────────► ต้องมีก่อน Marketing/Sales
-                          │
-                          ├──► 04_Finance ──────────────────────────► activate ก่อน/พร้อม CEO
-                          │         │
-                          │         └──► KPI_Dashboard ──────────────► CEO อ่านจาก Finance
-                          │
-                          ├──► 05_SelfImprovement ─────────────────► ต้องมี Finance + logs ก่อน
-                          │
-                          ├──► 02_Marketing ──────────────────────► activate หลัง CEO 1 รอบ
-                          │
-                          └──► 03_Sales ──────────────────────────► activate หลัง Marketing 1 สัปดาห์
-
-99_SHUTDOWN ──────────────────────────────────────────────────────────► ไม่ขึ้นกับใคร รันได้ตลอด
+KPI_Dashboard     ◄── Finance (เขียน)  ──► CEO, Self-Imp (อ่าน)
+Weekly_Plans      ◄── CEO (เขียน)
+Content_Log       ◄── Content Agent (เขียน)
+Product_Catalog   ◄── Product Agent (เขียน) ──► Fulfillment (อ่าน)
+Order_Log         ◄── Fulfillment Agent (เขียน)
+Financial_Reports ◄── Finance Agent (เขียน)
+Affiliate_Income  ◄── Manual entry (คุณ) ──► Finance (อ่าน)
+Improvement_Log   ◄── Self-Improvement (เขียน)
+Strategy_Decisions◄── SEED (เขียน)
 ```
 
 ---
 
-## Business Model ที่เลือก (AI-Executable)
+## Workflow Files
 
-เลือกธุรกิจที่ **AI + n8n ทำได้ 100%** โดยไม่ต้องใช้มนุษย์:
-
-### Primary Revenue Streams
-| # | โมเดลธุรกิจ | รายได้ประมาณ/เดือน | AI ทำได้ไหม |
-|---|---|---|---|
-| 1 | **AI Content & Newsletter** (Substack/Ghost) | $500–3,000 | ✅ สร้าง + publish อัตโนมัติ |
-| 2 | **Faceless YouTube / TikTok** (video automation) | $300–5,000 | ✅ script + voiceover + edit |
-| 3 | **AI Freelance Services** (Fiverr/Upwork — copywriting, SEO, data) | $1,000–8,000 | ✅ LLM + templates |
-| 4 | **Niche Affiliate / SEO Blog** | $500–4,000 | ✅ content pipeline |
-| 5 | **Workflow-as-a-Service** (ขาย n8n workflow ให้คนอื่น) | $1,000–10,000 | ✅ product ที่บริษัทนี้สร้างเอง |
-
-### Launch Order
-1. **เฟส 0 (เดือน 1):** Seed → Strategy Agent วิเคราะห์ตลาด → เลือก top 2 streams
-2. **เฟส 1 (เดือน 1–3):** Content + Freelance → สร้างรายได้เริ่มต้น
-3. **เฟส 2 (เดือน 3–6):** YouTube automation + SEO Blog
-4. **เฟส 3 (เดือน 6–12):** Workflow-as-a-Service + Scale ด้วยรายได้จากเฟสก่อน
-5. **เฟส 4 (ปีที่ 2+):** Self-funded expansion + hire AI-assisted freelancers
+| ไฟล์ | Workflow | Trigger | หน้าที่ | README |
+|---|---|---|---|---|
+| `00_SEED_Strategy.json` | SEED: Niche Research | Manual (1x) | เลือก niche + affiliate + product lineup | [📄](00_SEED_Strategy_README.md) |
+| `01_CEO_Orchestrator.json` | CEO Orchestrator | จันทร์ 07:00 | วางแผน content themes + product สัปดาห์นี้ | [📄](01_CEO_Orchestrator_README.md) |
+| `02_Marketing_Agent.json` | Content Agent | ทุกวัน 08:00 | Blog + Social + Affiliate publishing | [📄](02_Marketing_Agent_README.md) |
+| `03_Sales_Agent.json` | Product Agent | อังคาร 09:00 | สร้าง digital products รายสัปดาห์ | [📄](03_Sales_Agent_README.md) |
+| `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | P&L: Stripe + affiliate + OpenAI costs | [📄](04_Finance_Agent_README.md) |
+| `05_SelfImprovement_Agent.json` | Self-Improvement | อาทิตย์ 00:00 | Audit + improvement proposals | [📄](05_SelfImprovement_Agent_README.md) |
+| `06_Fulfillment_Agent.json` | Fulfillment Agent | Stripe Webhook (24/7) | Auto-deliver digital products via email | [📄](06_Fulfillment_Agent_README.md) |
+| `99_SHUTDOWN_Graceful.json` | Graceful Shutdown | Manual | ปิดทุก Agent + final report | [📄](99_SHUTDOWN_Graceful_README.md) |
 
 ---
 
-## Step-by-Step: วิธีเริ่มต้น
+## Revenue Loop — วิธีที่เงินเข้าจริง
+
+```
+Content Agent เขียน blog post ที่ฝัง affiliate link
+       ↓
+มีคน click affiliate link → ซื้อ tool
+       ↓
+Affiliate commission เข้าบัญชีอัตโนมัติ
+
+OR ลูกค้าสมัคร newsletter paid tier $9/mo
+       ↓
+Stripe subscription เก็บเงินอัตโนมัติทุกเดือน
+
+OR ลูกค้าซื้อ digital product
+       ↓
+Stripe payment → Webhook → 06_Fulfillment
+       ↓
+AI fetch product → SendGrid deliver ภายใน 1 นาที
+ไม่มีมนุษย์เข้ามาเลยตั้งแต่ต้นจนจบ
+```
+
+---
+
+## Setup Guide
 
 ### Prerequisites
+
 ```
-- n8n self-hosted (Docker บน Server ของคุณ)
-- LLM API Key: OpenAI GPT-4o หรือ Anthropic Claude
-- Database: PostgreSQL (สำหรับ memory + logging)
-- Storage: S3 หรือ local folder (สำหรับไฟล์งาน)
-- Email: SMTP / SendGrid (Marketing Agent)
-- Payment: Stripe account (รับเงิน)
-- Social accounts: Twitter/X, LinkedIn, YouTube (ตั้งไว้ล่วงหน้า)
+- n8n self-hosted (Docker บน VPS)
+- OpenAI API Key (GPT-4o)
+- Brave Search API Key (free 2,000 req/mo)
+- Google Sheets + OAuth2
+- Stripe Account
+- SendGrid Account (verified sender)
+- Ghost Blog
+- Buffer Account (Optional)
 ```
 
-### Step 1 — ติดตั้ง n8n
+### Step 1 — Install n8n
+
 ```bash
-docker run -it --rm \
-  --name n8n \
-  -p 5678:5678 \
+docker run -d --restart unless-stopped \
+  --name n8n -p 5678:5678 \
   -v ~/.n8n:/home/node/.n8n \
   -e N8N_BASIC_AUTH_ACTIVE=true \
   -e N8N_BASIC_AUTH_USER=admin \
-  -e N8N_BASIC_AUTH_PASSWORD=your_password \
+  -e N8N_BASIC_AUTH_PASSWORD=your_strong_password \
   docker.n8n.io/n8nio/n8n
 ```
-เปิด `http://localhost:5678` → Import `original organization.json`
 
-### Step 2 — กำหนด Credentials
-ใน n8n → Settings → Credentials เพิ่ม:
-- `OpenAI API` (หรือ Anthropic)
-- `PostgreSQL`
-- `SendGrid` / Gmail SMTP
-- `HTTP Header Auth` สำหรับ Stripe API
-- `Google Sheets` (Financial tracking)
+### Step 2 — สร้าง Google Sheets
 
-### Step 3 — Import Workflow ทั้งหมดเข้า n8n
+สร้าง Spreadsheet 1 ไฟล์ แล้วเพิ่ม sheets ดังนี้:
 
-ใน n8n → Workflows → Import from File → import ตามลำดับ:
-
-| ไฟล์ | Workflow | ทริกเกอร์ | หน้าที่ | README |
-|------|----------|-----------|---------|--------|
-| `00_SEED_Strategy.json` | Seed: Market Research | Manual (รันครั้งแรกครั้งเดียว) | วิเคราะห์ตลาด เลือกธุรกิจ | [📄](00_SEED_Strategy_README.md) |
-| `01_CEO_Orchestrator.json` | CEO Orchestrator | จันทร์ 07:00 | วางแผนรายสัปดาห์ | [📄](01_CEO_Orchestrator_README.md) |
-| `02_Marketing_Agent.json` | Marketing Agent | ทุกวัน 08:00 | สร้าง Content ทุกช่องทาง | [📄](02_Marketing_Agent_README.md) |
-| `03_Sales_Agent.json` | Sales Agent | ทุกวัน 09:00 | หาลูกค้า ส่ง Outreach | [📄](03_Sales_Agent_README.md) |
-| `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | รายงานการเงินรายสัปดาห์ | [📄](04_Finance_Agent_README.md) |
-| `05_SelfImprovement_Agent.json` | Self-Improvement Agent | อาทิตย์ 00:00 | Audit + เสนอการปรับปรุง | [📄](05_SelfImprovement_Agent_README.md) |
-| `99_SHUTDOWN_Graceful.json` | Graceful Shutdown | Manual (ปิดระบบ) | ปิดทุก Agent + สรุปผล | [📄](99_SHUTDOWN_Graceful_README.md) |
-
-### Step 4 — รัน Seed Workflow ก่อน
-Workflow แรกที่ต้องรัน: **"00_SEED_Strategy"**
-- Strategy Agent จะ research 10 business ideas
-- วิเคราะห์ automation feasibility, competition, revenue potential
-- output: `business_decision.json` → เลือก top 2 models
-- Activate workflows ที่เกี่ยวข้องอัตโนมัติ
-
-### Step 5 — Activate Workflows และปล่อยให้ระบบทำงาน
-หลัง Seed workflow เสร็จ Activate workflows ทั้งหมดแล้วแต่ละ Agent จะ trigger ตาม schedule:
-```
-CEO Agent          — ทุกวันจันทร์  07:00  (weekly planning)
-Marketing Agent    — ทุกวัน        08:00  (content publish)
-Sales Agent        — ทุกวัน        09:00  (outreach)
-Finance Agent      — ทุกวันศุกร์   18:00  (weekly report)
-Self-Improvement   — ทุกวันอาทิตย์ 00:00  (weekly audit)
-```
-
-### Step 6 — Monitor Dashboard
-Finance Agent สร้าง Google Sheet รายงานอัตโนมัติ:
-- รายได้รายสัปดาห์ / รายเดือน
-- Workflow error rate
-- KPI ของแต่ละ Agent
-- Self-Improvement recommendations
-
----
-
-## Kill Switch — วิธีปิดระบบ
-
-### Emergency Stop (ทันที)
-```bash
-# ปิด n8n container ทันที
-docker stop n8n
-```
-
-### Graceful Shutdown (แนะนำ)
-- รัน Workflow **"99_SHUTDOWN_Graceful"** ใน n8n
-- ระบบจะ: หยุด schedule ทั้งหมด → บันทึก state → export รายงานสุดท้าย → ปิด
-
-### Deactivate เฉพาะ Agent
-- n8n → Workflows → toggle "Active" ปิดเฉพาะแผนกที่ต้องการ
-
----
-
-## Self-Improvement Loop
-
-```
-ทุกสัปดาห์ (Self-Improvement Agent):
-1. ดึง logs จาก PostgreSQL
-2. วิเคราะห์ error rate, revenue per workflow, bottleneck
-3. สร้าง improvement report
-4. Propose: ปรับ prompt / เพิ่ม tool / สร้าง workflow ใหม่
-5. รอ Human approval (หรือ auto-approve ถ้า risk score ต่ำ)
-6. Apply changes → version control
-```
-
----
-
-## 12-Month Projection (Conservative)
-
-| เดือน | Revenue Target | Action |
+| Sheet Name | ข้อมูล | ใครเขียน |
 |---|---|---|
-| 1 | $0 (setup) | Seed + install + test |
-| 2–3 | $200–500 | Content + Freelance เริ่ม |
-| 4–6 | $1,000–3,000 | YouTube + Blog เพิ่ม traffic |
-| 7–9 | $3,000–8,000 | Scale + Workflow-as-a-Service launch |
-| 10–12 | $8,000–20,000 | Multi-stream consolidated |
-| **Year 2** | **$20,000–50,000/mo** | Self-funded, self-scaling |
+| `Strategy_Decisions` | niche/product decisions | SEED |
+| `KPI_Dashboard` | KPI ภาพรวม | Finance |
+| `Weekly_Plans` | แผนรายสัปดาห์ | CEO |
+| `Content_Log` | blog/social posts | Content Agent |
+| `Product_Catalog` | digital products ที่สร้างแล้ว | Product Agent |
+| `Order_Log` | orders fulfilled | Fulfillment Agent |
+| `Financial_Reports` | P&L รายสัปดาห์ | Finance Agent |
+| `Affiliate_Income` | affiliate commission (manual) | คุณ |
+| `Improvement_Log` | audit reports | Self-Improvement |
+
+### Step 3 — ตั้ง Credentials ใน n8n
+
+**n8n Credentials (Settings → Credentials):**
+
+| Credential | ประเภท | ใช้โดย |
+|---|---|---|
+| OpenAI API | OpenAI API | ทุก Agent |
+| Google Sheets OAuth2 | Google Sheets OAuth2 | ทุก Agent |
+| Brave Search | HTTP Header Auth: X-Subscription-Token | Content, CEO, SEED — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
+| Stripe | HTTP Header Auth: Authorization Bearer sk_live_... | Finance — ดู [SETUP_Stripe.md](SETUP_Stripe.md) |
+| Buffer | HTTP Header Auth: Authorization Bearer TOKEN | Content Agent |
+| Ghost Admin | HTTP Header Auth: Authorization Ghost ADMIN_KEY | Content + Product |
+
+**n8n Environment Variables (Settings → Environment Variables):**
+
+| Variable | ค่า | ใช้โดย |
+|---|---|---|
+| `N8N_API_KEY` | สร้างใน n8n → Settings → API | Shutdown workflow |
+| `SENDGRID_API_KEY` | ดู [SETUP_SendGrid.md](SETUP_SendGrid.md) | Fulfillment Agent |
+| `SENDGRID_FROM_EMAIL` | verified sender email | Fulfillment Agent |
+| `COMPANY_NAME` | ชื่อแบรนด์ของคุณ | Fulfillment Agent |
+| `GHOST_API_URL` | https://your-ghost-blog.com | Content + Product |
+| `GHOST_ADMIN_API_KEY` | Ghost → Settings → Integrations | Product Agent |
+| `BUFFER_TWITTER_PROFILE_ID` | Buffer dashboard → Channels | Content Agent |
+| `REPLACE_WITH_SPREADSHEET_ID` | Google Sheet ID จาก URL | ทุก workflow JSON |
+
+### Step 4 — Stripe Webhook
+
+1. Stripe Dashboard → Developers → Webhooks → Add endpoint
+2. URL: `https://YOUR_N8N_URL/webhook/stripe-webhook`
+3. Event: `checkout.session.completed`
+4. ตั้ง metadata บน Stripe product:
+   ```json
+   { "product_type": "prompt_pack", "product_title": "50 ChatGPT Prompts for Freelancers" }
+   ```
+
+### Step 5 — Activate Order
+
+```
+Day 1  → Run 00_SEED_Strategy (manual, 1x)
+Day 2  → Activate 01_CEO_Orchestrator
+Day 2  → Activate 04_Finance_Agent       (track costs ตั้งแต่ต้น)
+Day 3  → Activate 05_SelfImprovement
+          Activate 06_Fulfillment_Agent  (webhook 24/7)
+Week 1 → Activate 02_Content_Agent      (ดู quality 3 วัน)
+Week 2 → Activate 03_Product_Agent
+```
 
 ---
 
-## Tech Stack
+## 💰 Budget Guide
 
-| Layer | Tool |
+### One-time Setup (~$47)
+
+| รายการ | ค่าใช้จ่าย |
 |---|---|
-| Automation | n8n (self-hosted) |
-| LLM | OpenAI GPT-4o / Claude 3.5 Sonnet |
-| Memory | PostgreSQL + n8n memory nodes |
-| Storage | Local / S3 |
-| Web scraping | Browserless / Playwright (via HTTP node) |
-| Email | SendGrid |
-| Payments | Stripe |
-| Analytics | Google Sheets (simple) / Metabase (advanced) |
-| Version control | Git (workflow JSON export) |
+| VPS เดือนแรก (Hetzner CX22) | $6 |
+| Domain name | $12 |
+| OpenAI credit initial | $20 |
+| Ghost Pro (optional, can self-host) | $9 |
+| **รวม** | **~$47** |
 
----
+### Monthly Burn Rate
 
-## Ethical Guardrails (Built-in)
-
-ทุก Agent มี system prompt ที่ระบุ:
-```
-FORBIDDEN ACTIONS:
-- ห้ามส่ง spam หรือ phishing
-- ห้ามสร้าง content เท็จ / misleading
-- ห้ามทำธุรกรรมที่ผิดกฎหมาย
-- ห้าม access ข้อมูลส่วนตัวโดยไม่ได้รับอนุญาต
-- ทุกการใช้จ่ายเงิน > $50 ต้องรายงาน Finance Agent ก่อน
-```
-
----
-
-## ✅ Workflow Audit — ความสอดคล้องกับ About.md
-
-### ผลการตรวจสอบ (Alignment Check)
-
-| หัวข้อจาก About.md | Workflow ที่รองรับ | สถานะ | หมายเหตุ |
-|---|---|---|---|
-| AI Agent ทุกแผนกทำงาน 100% | 01–05 ทุก Workflow | ✅ ผ่าน | ครบทุก Agent มี LLM + Tools |
-| Seed Workflow หาธุรกิจก่อน | `00_SEED_Strategy` | ✅ ผ่าน | วิเคราะห์ + จัดอันดับ Business Model |
-| หารายได้ได้จริง | Marketing + Sales + Finance | ✅ ผ่าน | Stripe + Email outreach พร้อม |
-| เช็คตัวเอง + พัฒนาได้ต่อเนื่อง | `05_SelfImprovement` | ✅ ผ่าน | Weekly audit + improvement proposals |
-| ถูกต้องตามกฎหมาย/จริยธรรม | ทุก Agent (system prompt) | ✅ ผ่าน | FORBIDDEN list กำหนดไว้ทุก Agent |
-| ปิดระบบได้ทุกเวลา | `99_SHUTDOWN_Graceful` | ✅ ผ่าน | Manual kill-switch + final report |
-| ไม่ต้องมี Human in the loop | ทุก Workflow (schedule-based) | ✅ ผ่าน | Self-triggering ตาม cron schedule |
-
-**สรุป: Workflow ครอบคลุมทุกข้อใน About.md ครบถ้วน ✅**
-
----
-
-### ✅ Known Gaps — ช่องว่างที่พบและแก้ไขแล้ว
-
-| Workflow | ปัญหาที่พบ | สถานะ | การแก้ไข |
-|---|---|---|---|
-| **02 Marketing** | Generate content แต่ไม่ได้ publish จริง (แค่ log ไป Google Sheets) | ✅ แก้แล้ว | เพิ่ม node `Parse Content for Publishing` → `Publish via Buffer` (Twitter/LinkedIn) + `Publish to Ghost Blog` (newsletter draft) |
-| **02 Marketing** | ไม่มี Ghost / Substack publishing node | ✅ แก้แล้ว | เพิ่ม `Publish to Ghost Blog` HTTP node — POST ไปยัง Ghost Admin API `/ghost/api/admin/posts/` เป็น draft อัตโนมัติ |
-| **03 Sales** | `send_outreach_email` tool มี `hello@yourcompany.com` hardcoded — AI ไม่สามารถรู้ from-address จริง | ✅ แก้แล้ว | เปลี่ยนเป็น `toolCode` ที่อ่าน from-address จาก env vars: `SENDGRID_FROM_EMAIL`, `SENDGRID_API_KEY`, `COMPANY_NAME` |
-| **03 Sales** | ไม่มี LinkedIn / Upwork API integration สำหรับ outreach | ⚠️ ยังคงอยู่ | LinkedIn API ถูก restrict โดย LinkedIn; ใช้ Phantombuster/Dux-Soup หรือ manual post ก่อน |
-| **04 Finance** | OpenAI `/v1/usage` endpoint deprecated | ✅ แก้แล้ว | เปลี่ยนเป็น `/v1/organization/usage/completions` พร้อม `start_time`/`end_time` Unix timestamp params |
-| **05 Self-Improvement** | Output เป็น `pending_review` ไม่มี auto-apply | ✅ เจตนาดี | Human oversight คือ design decision — อย่า auto-apply high-risk changes |
-| **99 Shutdown** | JS node แค่ return instructions ไม่ได้ call n8n API จริง | ✅ แก้แล้ว | เปลี่ยนเป็น `this.helpers.httpRequest` จริง — GET workflow list → PATCH `{active: false}` ทุก workflow อัตโนมัติ |
-
-> **Credentials เพิ่มเติมที่ต้องตั้งหลังการแก้ไข:**
-> - `SENDGRID_API_KEY` — n8n → Settings → Environment Variables
-> - `SENDGRID_FROM_EMAIL` — อีเมล verified sender ใน SendGrid
-> - `COMPANY_NAME` — ชื่อบริษัท (ใช้ใน email from-name)
-> - `BUFFER_TWITTER_PROFILE_ID` — ดูจาก Buffer dashboard → Channels
-> - `GHOST_API_URL` — URL ของ Ghost instance (เช่น `https://your-blog.com`)
-> - Buffer credential (HTTP Header Auth: `Authorization: Bearer BUFFER_ACCESS_TOKEN`)
-> - Ghost credential (HTTP Header Auth: `Authorization: Ghost YOUR_ADMIN_API_KEY`)
-
----
-
-## 💰 Budget & Investment Guide
-
-### งบประมาณเริ่มต้น (One-time Setup Cost)
-
-| รายการ | ค่าใช้จ่าย | จำเป็น? | หมายเหตุ |
-|---|---|---|---|
-| **VPS/Server** (เดือนแรก) | $5–8 | ✅ จำเป็น | Hetzner CX22 (~€4.35/mo) หรือ DigitalOcean $6/mo |
-| **Domain name** | $10–15/ปี (~$1/เดือน) | แนะนำ | สำหรับ branding + email ที่น่าเชื่อถือ |
-| **OpenAI API credit** (initial top-up) | $20 | ✅ จำเป็น | ซื้อ credit ไว้ก่อนเพื่อไม่ให้ interrupt |
-| **Brave Search API** | $0 | ✅ จำเป็น | Free tier 2,000 queries/month เพียงพอช่วงแรก |
-| **Google Sheets** | $0 | ✅ จำเป็น | ใช้ Google account ปกติได้เลย |
-| **Stripe account** | $0 | ✅ จำเป็น | ฟรี เปิดบัญชี; จ่ายเมื่อมีรายได้ (2.9% + $0.30/tx) |
-| **SendGrid** | $0 | ✅ จำเป็น | Free tier 3,000 email/month เพียงพอช่วงแรก |
-| **Social accounts** (Twitter/X, LinkedIn, YouTube) | $0 | แนะนำ | สร้างล่วงหน้าก่อนเปิด Sales + Marketing |
-| **Buffer** (ถ้าต้องการ auto-post social จริง) | $0–18/month | ⚠️ Optional | Free: 3 channels/10 posts; Essentials: $6/channel/mo |
-| **Ghost** (newsletter, ถ้าต้องการ) | $0–9/month | ⚠️ Optional | Ghost(Pro) Starter $9/mo หรือ self-host บน server เดิม |
-| **เวลาของคุณ (setup)** | ~2–4 ชั่วโมง | ✅ | ตั้งค่า credentials + import + test workflows |
-
-> **งบประมาณเริ่มต้นที่แนะนำ: $50–70 (ครั้งแรก รวมทุกอย่าง)**
-
----
-
-### ค่าใช้จ่ายรายเดือน (Monthly Burn Rate)
-
-| รายการ | Tier ประหยัด | Tier ปกติ | หมายเหตุ |
-|---|---|---|---|
-| **Server (Hetzner/DigitalOcean)** | $5 | $8–12 | CX22 หรือ DO Basic Droplet |
-| **OpenAI GPT-4o API** | $5–10 | $15–30 | ขึ้นกับ usage จริง; ช่วงแรกต่ำ |
-| **Brave Search API** | $0 | $0–5 | Free tier 2K queries/mo เพียงพอช่วงแรก |
-| **SendGrid Email** | $0 | $0–20 | Free 3K/mo เพียงพอช่วงแรก |
-| **Buffer Social Publishing** | $0 | $18 | ถ้าต้องการ auto-post จริง |
-| **Ghost Newsletter** | $0 | $9 | Optional |
-| **Domain (pro-rated)** | ~$1 | ~$1 | $10–15/ปี |
-| **รวม** | **$11–16/เดือน** | **$55–95/เดือน** | ใช้ tier ประหยัดช่วงแรกได้ |
-
-> **ประมาณการ 3 เดือนแรก (ก่อนมีรายได้): $50–150 รวมทั้งหมด**
-> **จุดคุ้มทุน:** Sales Agent ปิด deal ได้ 1 งาน ($500 workflow setup) = คุ้มทุน 3–10 เดือน
-
----
-
-### ต้นทุนแต่ละส่วน (Investment by Component)
-
-| ส่วน | สิ่งที่ต้องลงทุน | ค่าใช้จ่าย/เดือน |
+| รายการ | ประหยัด | ปกติ |
 |---|---|---|
-| **Infrastructure** | VPS Server + Domain + SSL (Let's Encrypt ฟรี) | $5–10 |
-| **AI Brain (LLM)** | OpenAI GPT-4o API — เพิ่ม/ลดตาม usage | $5–30 |
-| **Research & Data** | Brave Search API | $0 (free tier) |
-| **Content Distribution** | Buffer (social) + Ghost (newsletter) | $0–27 |
-| **Revenue Processing** | Stripe | $0 + 2.9% per sale |
-| **Email/Outreach** | SendGrid SMTP | $0 (free tier) |
-| **Data & Logging** | Google Sheets + PostgreSQL (on server) | $0 |
-| **Version Control** | Git + GitHub (free) | $0 |
+| VPS Server | $6 | $12 |
+| OpenAI API | $5–10 | $15–30 |
+| Brave Search | $0 | $0 |
+| SendGrid | $0 | $0 |
+| Ghost | $0 (self-host) | $9 |
+| Buffer | $0 | $18 |
+| Domain | $1 | $1 |
+| **รวม** | **$12–17** | **$55–70** |
+
+> จุดคุ้มทุน: newsletter subscriber 2 คน ($9/mo) = คืน server cost แล้ว
 
 ---
 
-## 🗓️ Human Maintenance Guide
+## Setup Guides
 
-แม้ระบบจะ autonomous แต่ **คุณยังต้องทำบางอย่าง** เพื่อให้ระบบทำงานได้อย่างมีประสิทธิภาพและปลอดภัย
-
-### รายสัปดาห์ (ใช้เวลา ~30–60 นาที/สัปดาห์)
-
-| วัน | งาน | ที่ไหน | เวลาที่ใช้ |
-|---|---|---|---|
-| **จันทร์** (หลัง 07:00) | ดู Weekly Plan ที่ CEO Agent สร้าง — ตรวจความสมเหตุสมผล | Google Sheets → `Weekly_Plans` | 10 นาที |
-| **จันทร์–ศุกร์** | สุ่มตรวจ content ที่ Marketing generate — หาข้อผิดพลาดหรือเนื้อหาไม่เหมาะสม | Google Sheets → `Content_Log` | 5–10 นาที |
-| **ศุกร์** (หลัง 18:00) | ดู Finance Report รายสัปดาห์ — เช็ค revenue, cost, alerts | Google Sheets → `Financial_Reports` | 15 นาที |
-| **อาทิตย์** (ตอนเช้า) | ดู Self-Improvement Audit report — review improvement proposals | Google Sheets → `Improvement_Log` | 15–20 นาที |
-| **อาทิตย์** | Approve/Reject improvement proposals Priority 1 — apply changes เองใน n8n | n8n + Git | 10–15 นาที |
-
-**สัญญาณอันตรายที่ต้องสังเกตทันที:**
-- Error rate > 20% ใน n8n → Executions tab
-- OpenAI cost spike ผิดปกติ (>$5/วัน ช่วงแรก) → OpenAI dashboard
-- Finance Agent ส่ง alert ใน report (expenses > 30% revenue)
-- Content มีข้อมูลผิดพลาด misleading หรือผิดจริยธรรม
-
----
-
-### รายเดือน (ใช้เวลา ~1–2 ชั่วโมง/เดือน)
-
-| งาน | รายละเอียด | เวลาที่ใช้ |
+| Service | ใช้ใน | Guide |
 |---|---|---|
-| **Review Monthly P&L** | ดู Stripe dashboard + Google Sheets `Financial_Reports` ครบเดือน | 20 นาที |
-| **API Key Management** | ตรวจสอบ OpenAI / Brave / SendGrid keys ยังใช้ได้ ไม่หมดอายุ | 5 นาที |
-| **Apply Workflow Improvements** | นำ Priority-1 improvements จาก Self-Improvement Agent มา implement ใน n8n | 30–45 นาที |
-| **Content Quality Audit** | สุ่ม review 5–10 content pieces ที่ generate ใน sheet | 15 นาที |
-| **Social Account Health Check** | ตรวจว่า Twitter/LinkedIn accounts ไม่ถูก suspend หรือ flag | 5 นาที |
-| **Backup Workflows** | Export workflows จาก n8n → commit ไปยัง Git repo | 10 นาที |
-| **Stripe/Financial Review** | ดู payout, refund, dispute ใน Stripe Dashboard | 10 นาที |
-| **Top-up API Credits** | ถ้า OpenAI credit < $5 ให้ top-up เพื่อป้องกัน workflow interrupt | 5 นาที |
+| Brave Search API | SEED, CEO, Content, Self-Improvement | [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
+| SendGrid | Fulfillment Agent | [SETUP_SendGrid.md](SETUP_SendGrid.md) |
+| Stripe | Finance + Fulfillment | [SETUP_Stripe.md](SETUP_Stripe.md) |
 
 ---
 
-### เมื่อไหรที่ต้องเข้าไป Intervene ทันที
+## Kill Switch
+
+```bash
+# Emergency
+docker stop n8n
+
+# Graceful: รัน 99_SHUTDOWN_Graceful workflow → final report → deactivate all
+```
+
+---
+
+## 🗓️ Human Maintenance
+
+### รายสัปดาห์ (~30 นาที)
+
+| วัน | งาน | เวลา |
+|---|---|---|
+| จันทร์ | ดู CEO Weekly Plan ใน Weekly_Plans sheet | 10 นาที |
+| พุธ | สุ่มตรวจ blog — affiliate links ถูกต้อง? | 10 นาที |
+| ศุกร์ | ดู Finance Report — revenue + alerts | 10 นาที |
+| อาทิตย์ | อ่าน Self-Improvement proposals → approve Priority 1 | 15 นาที |
+
+### รายเดือน (~1 ชั่วโมง)
+
+| งาน | รายละเอียด |
+|---|---|
+| Monthly P&L | Stripe + Financial_Reports รวมเดือน |
+| Apply improvements | ใส่ Priority-1 ใน n8n |
+| Add affiliate income | กรอก commission เข้า Affiliate_Income sheet |
+| Backup | Export JSON → git commit |
+| Top-up OpenAI | ถ้า balance < $5 |
+
+### สัญญาณอันตราย
 
 | สถานการณ์ | Action |
 |---|---|
-| Workflow error ติดต่อกัน > 3 วัน | n8n → Executions → ดู error log → แก้ไข |
-| AI generate content ผิดพลาด/ไม่เหมาะสม | Deactivate Marketing Agent → แก้ system prompt → Activate ใหม่ |
-| ค่าใช้จ่าย API spike ผิดปกติ | OpenAI dashboard → ดู usage → ตั้ง spending limit |
-| Sales Agent ส่ง email ที่ไม่เหมาะสม | Deactivate Sales Agent → review outreach template → Activate |
-| รายได้หายหรือ Stripe มีปัญหา | Stripe dashboard → ดู events → ติดต่อ Stripe support |
-| ต้องการหยุดระบบทั้งหมด | รัน `99_SHUTDOWN_Graceful` workflow → follow instructions ใน output |
+| n8n error > 20% ติดต่อกัน 2 วัน | Executions tab → แก้ error |
+| OpenAI cost > $5/วัน ช่วงแรก | ตั้ง spending limit ใน OpenAI |
+| Content มี misleading claims | Deactivate Content Agent → แก้ prompt |
+| Fulfillment webhook ไม่ทำงาน | ตรวจ Stripe webhook events ใน n8n |
 
 ---
 
-## 📋 System-wide Operating Instructions
+## Ethical Guardrails
 
-### หลักการสำคัญ (Operating Principles)
-
-```
-1. HUMAN IS THE OWNER
-   AI ทำงาน แต่คุณเป็นผู้รับผิดชอบทางกฎหมายและจริยธรรมทั้งหมด
-
-2. AUDIT WEEKLY — ไม่ปล่อยระบบทิ้งไว้โดยไม่ดูนาน
-   ดู Self-Improvement report ทุกสัปดาห์
-
-3. START SLOW — เปิด workflow ทีละชั้น
-   รัน Marketing + Finance ก่อน → verify quality → ค่อยเปิด Sales
-
-4. MONITOR COSTS — ตั้ง Spending Limit ใน OpenAI Dashboard
-   แนะนำ: $30/month hard limit ช่วงแรก
-
-5. BACKUP ALWAYS — export JSON ก่อนเปลี่ยนแปลงใดๆ
-   git commit ทุกครั้งก่อนแก้ workflow
-
-6. NEVER AUTO-APPROVE HIGH-RISK CHANGES
-   improvements ที่ risk = "high" ต้อง manual review เสมอ
-
-7. CONTENT IS YOUR REPUTATION
-   ตรวจ content ก่อน publish จริง — AI อาจ hallucinate ได้
-```
+ทุก Agent มี FORBIDDEN list ใน system prompt:
+- ห้าม spam / phishing / black-hat tactics
+- ห้าม misleading affiliate claims
+- ทุก affiliate recommendation ต้องเหมาะกับ context จริงๆ
+- ห้ามสร้าง content ที่ผิดกฎหมาย
 
 ---
 
-### ลำดับการเปิดระบบที่แนะนำ (Safe Activation Order)
+## 12-Month Revenue Projection (Conservative)
 
-```
-วันที่ 1  → รัน 00_SEED_Strategy (manual, ครั้งเดียว) — อ่าน output ก่อน
-วันที่ 2  → Activate 01_CEO_Orchestrator
-วันที่ 2  → Activate 04_Finance_Agent  (track costs ตั้งแต่วันแรก)
-วันที่ 3  → Activate 05_SelfImprovement_Agent
-สัปดาห์ 1 → Activate 02_Marketing_Agent (ดู content output 3 วัน ก่อน activate Sales)
-สัปดาห์ 2 → Activate 03_Sales_Agent (เมื่อ content quality ผ่านการตรวจแล้ว)
-```
-
----
-
-### Google Sheets Structure ที่ต้องสร้างก่อน Activate
-
-สร้าง Google Spreadsheet 1 ไฟล์ แล้วเพิ่ม sheets ต่อไปนี้:
-
-| Sheet Name | ใช้โดย Workflow | ข้อมูลที่เก็บ |
+| เดือน | MRR Target | หมายเหตุ |
 |---|---|---|
-| `KPI_Dashboard` | CEO + Self-Improvement | KPI ภาพรวมทุก Agent |
-| `Weekly_Plans` | CEO Orchestrator | Weekly plan รายสัปดาห์ |
-| `Content_Log` | Marketing Agent | Content ที่ generate รายวัน |
-| `Error_Log` | Marketing Agent | Error logs |
-| `CRM` | Sales Agent | Leads + outreach history |
-| `Financial_Reports` | Finance Agent | Weekly P&L |
-| `Improvement_Log` | Self-Improvement Agent | Audit reports + proposals |
-| `Shutdown_Log` | Shutdown Workflow | Final report เมื่อปิดระบบ |
+| 1–2 | $0 | Setup + content building |
+| 3–4 | $50–200 | Affiliate เริ่มมา + subscriber แรก |
+| 5–6 | $200–500 | Newsletter + digital products แรก |
+| 7–9 | $500–1,500 | 3 streams เริ่มทำงานพร้อมกัน |
+| 10–12 | $1,500–4,000 | Compound growth |
+| Year 2 | $4,000–15,000/mo | Scale ด้วย catalog สะสม + traffic |
 
 ---
 
-### Credentials Checklist (ก่อน Activate workflows)
-
-**n8n Credentials (Settings → Credentials):**
-- [ ] `REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID` → เปลี่ยนใน n8n Settings → Credentials → OpenAI
-- [ ] `REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID` → เปลี่ยนใน n8n Settings → Credentials → Google Sheets OAuth2
-- [ ] `REPLACE_WITH_SPREADSHEET_ID` → ใส่ Google Sheet ID จริง (ดูจาก URL: `spreadsheets/d/[ID]/edit`)
-- [ ] Brave Search API Key → สมัครที่ [api.search.brave.com](https://api.search.brave.com) → เพิ่มใน n8n Header Auth
-- [ ] Stripe Secret Key → ดูที่ [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys)
-- [ ] Buffer credential → HTTP Header Auth: `Authorization: Bearer BUFFER_ACCESS_TOKEN` (ดูที่ buffer.com → Account → API)
-- [ ] Ghost credential → HTTP Header Auth: `Authorization: Ghost YOUR_GHOST_ADMIN_API_KEY` (ดูที่ Ghost Admin → Settings → Integrations)
-
-**n8n Environment Variables (Settings → Environment Variables):**
-- [ ] `N8N_API_KEY` → สร้างใน n8n Settings → n8n API → Create API Key (ใช้โดย Shutdown workflow)
-- [ ] `N8N_HOST` → ตั้งใน Docker: `-e N8N_HOST=http://your-server-ip:5678`
-- [ ] `SENDGRID_API_KEY` → จาก [app.sendgrid.com/settings/api_keys](https://app.sendgrid.com/settings/api_keys)
-- [ ] `SENDGRID_FROM_EMAIL` → อีเมล verified sender ของคุณใน SendGrid
-- [ ] `COMPANY_NAME` → ชื่อบริษัท/แบรนด์ (ปรากฏใน email from-name)
-- [ ] `BUFFER_TWITTER_PROFILE_ID` → ดูจาก Buffer dashboard → Channels → Twitter profile ID
-- [ ] `GHOST_API_URL` → URL ของ Ghost site (เช่น `https://your-ghost-blog.com`)
-
----
-
-*Generated: February 2026 | Version: 1.1.0 | Last updated: February 25, 2026*
+*Version 2.0 — Rewritten for fully autonomous digital business*
+*Business model: Content Media + Digital Products (fully AI-executable)*

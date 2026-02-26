@@ -11,7 +11,7 @@
 
 ## วัตถุประสงค์
 
-Finance Agent ทำหน้าที่เป็น **CFO อัตโนมัติ** รายงานสถานะการเงินทุกสัปดาห์ ดึงข้อมูล revenue จาก Stripe, ดึง LLM costs จาก OpenAI, เปรียบเทียบกับสัปดาห์ก่อน และส่ง alerts ถ้ามีสิ่งผิดปกติ บันทึกผลลัพธ์ใน Google Sheets 2 ที่พร้อมกัน
+Finance Agent ทำหน้าที่เป็น **CFO อัตโนมัติ** รายงานสถานะการเงินทุกสัปดาห์ ดึงข้อมูล revenue จาก 3 streams: **Stripe** (digital product sales + newsletter subscriptions), **Affiliate Income** (จาก sheet), และ **OpenAI costs** พร้อมคำนวณ net profit + alerts ถ้ามีสิ่งผิดปกติ บันทึกผลลัพธ์ใน Google Sheets 2 ที่พร้อมกัน
 
 ---
 

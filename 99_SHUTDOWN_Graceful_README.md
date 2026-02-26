@@ -82,7 +82,7 @@ Shutdown Complete
   },
   "systemHealthAtShutdown": {
     "mostReliable": "Finance Agent (99% success)",
-    "mostProblematic": "Sales Agent (SendGrid bounces week 3)"
+    "mostProblematic": "Fulfillment Agent (SendGrid bounces week 3)"
   },
   "keyLessons": [...],
   "restartRecommendations": [...],

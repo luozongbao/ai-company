@@ -13,8 +13,9 @@
 
 CEO Agent คือ **ศูนย์กลางการตัดสินใจ** ของระบบ ทำงานทุกต้นสัปดาห์เพื่อ:
 - ดึง KPI สัปดาห์ที่แล้วจาก Google Sheets
-- รับข้อมูล market intelligence ใหม่
-- วางแผนรายสัปดาห์สำหรับทุกแผนก (Marketing, Sales, Finance, Self-Improvement)
+- รับข้อมูล market intelligence + trending topics ใหม่
+- กำหนด content themes ประจำสัปดาห์สำหรับ Content Agent
+- ระบุ product opportunity สำหรับ Product Agent
 - บันทึก weekly plan ไว้ใน Google Sheets สำหรับ audit และ tracking
 
 ---
@@ -65,15 +66,14 @@ Save to Google Sheets (sheet: Weekly_Plans)
 ```json
 {
   "weekNumber": 9,
-  "priorities": ["Scale content output", "Close 2 freelance deals", "Monitor API costs"],
-  "departmentPlans": {
-    "marketing": { "contentTarget": 7, "platforms": ["twitter", "linkedin", "ghost"], "topics": [...] },
-    "sales": { "leadsTarget": 50, "outreachTarget": 20, "offer": "..." },
-    "finance": { "revenueTarget": 1500, "costBudget": 100 },
-    "selfImprovement": { "auditFocus": [...], "proposedChanges": [...] }
+  "contentThemes": ["AI automation for freelancers", "Prompt engineering tips", "n8n tutorials"],
+  "agentTasks": {
+    "contentAgent": { "topicsCount": 7, "affiliateFocus": "OpenAI API tools", "newsletterCTA": "..." },
+    "productAgent": { "productType": "prompt_pack", "targetTopic": "ChatGPT for marketers", "pricePoint": 19 }
   },
-  "riskFlags": [],
-  "revenueTarget": 1500
+  "revenueTarget": 1500,
+  "trendingOpportunity": "GPT-4o tool integrations gaining traction",
+  "riskFlags": []
 }
 ```
 
@@ -112,9 +112,9 @@ Save to Google Sheets (sheet: Weekly_Plans)
 04_Finance_Agent ──→ อัปเดต KPI_Dashboard ───┘
 
 CEO Plan อ่านโดย:
-├── 02_Marketing_Agent  (จะรู้ว่าต้องทำ content เรื่องอะไร)
-├── 03_Sales_Agent      (จะรู้ว่าต้อง target ลูกค้าแบบไหน)
-└── 05_SelfImprovement  (จะรู้ว่า CEO prioritize อะไร)
+├── 02_Marketing_Agent (Content Agent)  — รู้ว่าต้องทำ content themes อะไรสัปดาห์นี้
+├── 03_Sales_Agent (Product Agent)      — รู้ว่า product type / topic ที่ควร launch
+└── 05_SelfImprovement                  — รู้ว่า CEO prioritize อะไรเพื่อ audit ตรงจุด
 ```
 
 > **หมายเหตุ:** Agent แผนกอื่นยังไม่ได้อ่าน `Weekly_Plans` sheet โดยตรงในปัจจุบัน — เป็น improvement ที่แนะนำให้เพิ่มในเฟสถัดไป
@@ -149,3 +149,7 @@ CEO Plan อ่านโดย:
 | **ทุกจันทร์** | เปิด Google Sheets `Weekly_Plans` → อ่าน plan → confirm หรือ flag ความผิดปกติ | 10 นาที |
 | **รายเดือน** | ตรวจสอบว่า revenue targets มีความสมเหตุสมผลเพิ่มขึ้นตาม growth | 5 นาที |
 | **ถ้า plan ผิดพลาด** | แก้ system prompt ใน `CEO Agent` node → เพิ่ม constraints หรือ context | เมื่อพบปัญหา |
+
+---
+
+> **v2.0 Note:** CEO Orchestrator ใน v2 นี้ coordinate **Content Media + Digital Products** business — ไม่มี Marketing department หรือ Sales department แยก แต่ทำงานผ่าน Content Agent (blog/affiliate) และ Product Agent (digital products) แทน
