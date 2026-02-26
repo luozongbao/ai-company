@@ -29,8 +29,8 @@ Schedule Trigger (ทุกวัน 08:00)
 Set Daily Context
     │  กำหนด today (formatted date), content_prompt
     ▼
-Marketing Agent  ←── OpenAI GPT-4o (temp: 0.7, max 4000 tokens)
-    │            ←── Marketing Memory (session: "marketing_agent_memory")
+Content Agent  ←── OpenAI GPT-4o (temp: 0.7, max 4000 tokens)
+    │          ←── Marketing Memory (session: "marketing_agent_memory")
     │            ←── Tool: Trending Topics (Brave Search — freshness: last 24h)
     │            ←── Tool: SEO Keywords (Brave Suggest API)
     │

@@ -30,7 +30,7 @@ Manual Trigger
     │
     ▼
 Set Research Prompt
-    │  กำหนด prompt: วิเคราะห์ 10 business models ที่ AI ทำได้ใน 2026
+    │  กำหนด prompt: วิเคราะห์ AI automation content niche + affiliate programs + product lineup
     ▼
 Strategy Agent  ←── OpenAI GPT-4o (temp: 0.3)
     │           ←── Window Buffer Memory
@@ -43,7 +43,7 @@ Prepare Output
     │  เพิ่ม timestamp, status: "seed_complete", next_action
     ▼
 Save Strategy Decision
-    │  POST ผลลัพธ์ไปยัง webhook หรือ internal endpoint
+    │  append ลง Google Sheets → sheet: Strategy_Decisions
     ▼
 [จบ — ดู output แล้ว activate workflows ที่ต้องการ]
 ```
@@ -67,7 +67,7 @@ Save Strategy Decision
 ### Output (JSON)
 ```json
 {
-  "strategy_result": "{ ... JSON วิเคราะห์ business models ... }",
+  "strategy_result": "{ ... JSON: niche, affiliatePrograms, digitalProducts, newsletterStrategy, contentCalendarSeed ... }",
   "timestamp": "2026-02-25T07:00:00.000Z",
   "status": "seed_complete",
   "next_action": "Activate 01_CEO_Orchestrator workflow and selected business workflows"
@@ -114,7 +114,7 @@ Save Strategy Decision
     ▼
 01_CEO_Orchestrator  ← activate หลังจากอ่าน output
 02_Content_Agent   ← activate ถ้าเลือก Content/Newsletter model
-03_Product_Agent       ← activate ถ้าเลือก Freelance/Services model
+03_Product_Agent     ← activate เสมอ (สร้าง digital products รายสัปดาห์)
 04_Finance_Agent     ← activate เสมอ
 05_SelfImprovement   ← activate เสมอ
 ```

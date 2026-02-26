@@ -5,7 +5,7 @@
 | **File** | `04_Finance_Agent.json` |
 | **Trigger** | Schedule — ทุกวันศุกร์ เวลา 18:00 |
 | **Version** | 1.1.0 |
-| **Status** | Activate ตั้งแต่วันแรก (ก่อน Marketing/Sales เพื่อ track costs) |
+| **Status** | Activate ตั้งแต่วันแรก (ก่อน Content/Product เพื่อ track costs) |
 
 ---
 
@@ -67,8 +67,8 @@ Update KPI Dashboard
   },
   "netProfit": 1475.50,
   "revenueByStream": {
-    "freelance": 1000,
-    "content": 300,
+    "digital_product": 1000,
+    "newsletter_subscription": 300,
     "affiliate": 200
   },
   "forecast": {
@@ -88,7 +88,7 @@ Update KPI Dashboard
 | Condition | Alert |
 |---|---|
 | Expenses > 30% of revenue | ⚠️ Cost ratio too high |
-| LLM cost > $20/day | 🚨 API cost spike |
+| OpenAI cost > $15/week | 🚨 API cost spike |
 | Revenue < previous week by > 20% | ⚠️ Revenue declining |
 
 ---
@@ -119,7 +119,7 @@ Update KPI Dashboard
 2. ตั้ง OpenAI + Google Sheets credentials
 3. Replace `REPLACE_WITH_SPREADSHEET_ID` ทุกที่
 4. สร้าง sheets `Financial_Reports` และ `KPI_Dashboard`
-5. **Activate ก่อน Marketing และ Sales** — เพื่อให้มี baseline cost tracking ตั้งแต่ต้น
+5. **Activate ก่อน Content Agent และ Product Agent** — เพื่อให้มี baseline cost tracking ตั้งแต่ต้น
 6. รอถึงวันศุกร์ หรือ Execute manual เพื่อทดสอบ
 
 > **Note:** ช่วงแรกที่ยังไม่มี Stripe transactions — Agent จะ generate report พร้อม `weeklyRevenue: 0` ซึ่งเป็นปกติ

@@ -75,10 +75,11 @@ Shutdown Complete
     "total": 315,
     "estimatedReach": 25000
   },
-  "salesResults": {
-    "leadsContacted": 2100,
-    "dealsWon": 8,
-    "revenueFromSales": 9500
+  "revenueResults": {
+    "digitalProductsSold": 52,
+    "newsletterSubscribers": 180,
+    "affiliateClicks": 4300,
+    "totalFromProducts": 9500
   },
   "systemHealthAtShutdown": {
     "mostReliable": "Finance Agent (99% success)",
@@ -146,7 +147,7 @@ n8n → Workflows → ค้นหา workflow ที่ต้องการ �
 
 ```
 ระบบปกติ:
-01_CEO ── 02_Marketing ── 03_Sales ── 04_Finance ── 05_SelfImprovement
+01_CEO ── 02_Content ── 03_Product ── 04_Finance ── 05_SelfImprovement
                                                            │
                                                    ทุกอาทิตย์ audit
 

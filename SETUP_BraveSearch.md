@@ -2,7 +2,7 @@
 
 | Property | Value |
 |---|---|
-| **ใช้โดย Workflow** | `00_SEED`, `01_CEO`, `02_Marketing`, `03_Sales`, `05_SelfImprovement` |
+| **ใช้โดย Workflow** | `00_SEED`, `01_CEO`, `02_Content`, `03_Product`, `05_SelfImprovement` |
 | **หน้าที่** | Web search + SEO keyword suggest สำหรับทุก AI Agent |
 | **ราคา** | Free tier — $0 (2,000 requests/เดือน) |
 | **เวลาตั้งค่า** | ~5 นาที |
@@ -36,9 +36,9 @@ Project นี้ใช้เป็น "ตา" ของทุก AI Agent — 
 
 | Workflow | Requests/รัน | ความถี่ | Requests/เดือน |
 |---|---|---|---|
-| `02_Marketing` (web search) | ~3–5 | ทุกวัน | ~90–150 |
-| `02_Marketing` (suggest) | ~2–3 | ทุกวัน | ~60–90 |
-| `03_Sales` | ~3–5 | ทุกวัน | ~90–150 |
+| `02_Content_Agent` (web search) | ~3–5 | ทุกวัน | ~90–150 |
+| `02_Content_Agent` (suggest) | ~2–3 | ทุกวัน | ~60–90 |
+| `03_Product_Agent` | ~3–5 | ทุกอาทิตย์ | ~12–20 |
 | `01_CEO` | ~2–3 | ทุกจันทร์ | ~8–12 |
 | `05_SelfImprovement` | ~2–3 | ทุกอาทิตย์ | ~8–12 |
 | `00_SEED` | ~3–5 | ครั้งเดียว | ~5 |
@@ -140,14 +140,14 @@ Query Parameters:
 ```
 SEED:           "best AI automation business models 2026 revenue"
 CEO:            "AI workflow automation market trends February 2026"
-Marketing:      "n8n automation trending topics today"
-Sales:          "site:reddit.com need help automate my business 2026"
+Content:        "n8n automation trending topics today"
+Product:        "n8n automation digital products demand 2026"
 SelfImprovement:"new n8n nodes AI tools automation update 2026"
 ```
 
 ### 2. `/v1/suggest` — Search Suggestions (SEO Keywords)
 
-ใช้ใน: Marketing Agent เท่านั้น
+ใช้ใน: Content Agent เท่านั้น
 
 ```
 GET https://api.search.brave.com/res/v1/suggest

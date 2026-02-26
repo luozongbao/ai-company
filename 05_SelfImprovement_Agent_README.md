@@ -68,15 +68,19 @@ Save Improvement Report
 ```json
 {
   "workflowHealth": {
-    "marketing": { "successRate": 0.95, "avgExecutionMs": 12000, "errors": [] },
-    "sales": { "successRate": 0.90, "errors": ["SendGrid 400 on day 3"] },
-    ...
+    "contentAgent": { "successRate": 0.95, "avgExecutionMs": 12000, "errors": [] },
+    "productAgent": { "successRate": 1.0, "errors": [] },
+    "fulfillmentAgent": { "successRate": 0.98, "errors": [] },
+    "financeAgent": { "successRate": 1.0, "errors": [] },
+    "ceoOrchestrator": { "successRate": 1.0, "errors": [] }
   },
   "performanceSummary": {
     "contentPublished": 7,
-    "leadsContacted": 65,
-    "revenueThisWeek": 1500,
-    "ceoPlansCompleted": "3/4"
+    "productsCreated": 1,
+    "ordersDelivered": 4,
+    "newsletterSubscribers": 82,
+    "affiliateClicks": 143,
+    "revenueThisWeek": 1500
   },
   "systemGaps": [
     "No LinkedIn direct posting capability",
@@ -84,7 +88,7 @@ Save Improvement Report
   ],
   "improvementProposals": [
     {
-      "problem": "Marketing Agent generates content but SEO blog not posted to website",
+      "problem": "Content Agent generates content but blog post not linked to Stripe product page",
       "solution": "Add WordPress REST API node after Ghost draft creation",
       "impact": "Increase organic traffic 2x in 2 months",
       "effort": "low",
@@ -94,9 +98,10 @@ Save Improvement Report
   ],
   "promptOptimizations": [],
   "businessModelReview": {
-    "freelanceServices": "growing",
-    "contentNewsletter": "flat — increase posting frequency",
-    "recommendation": "maintain both streams, launch SEO blog in 2 weeks"
+    "affiliate": "growing — 143 clicks this week",
+    "newsletterSubscription": "flat — increase CTA frequency in posts",
+    "digitalProducts": "new — 1 product created, 4 sold",
+    "recommendation": "grow all 3 streams; prioritize newsletter CTA optimization"
   },
   "priorityActions": ["Apply WordPress API integration this week", "Fix SendGrid bounce issue"]
 }
@@ -144,7 +149,7 @@ Save Improvement Report
 4. ตั้ง Header Auth credential ด้วย key นั้น → ผูกกับ `Tool: n8n Execution Logs`
 5. Activate workflow
 
-> **ทดสอบ:** Execute manual หลังจาก Marketing + Sales + Finance รันไปแล้วอย่างน้อย 1 รอบ เพื่อให้มีข้อมูลให้วิเคราะห์
+> **ทดสอบ:** Execute manual หลังจาก Content Agent + Product Agent + Finance Agent รันไปแล้วอย่างน้อย 1 รอบ เพื่อให้มีข้อมูลให้วิเคราะห์
 
 ---
 
@@ -175,7 +180,7 @@ Save Improvement Report
 ## Audit Checklist (ดูทุกวันอาทิตย์หรือจันทร์เช้า)
 
 - [ ] มี record ใหม่ใน `Improvement_Log` sheet
-- [ ] `workflowHealth` ครบทุก workflow (marketing, sales, finance, ceo)
+- [ ] `workflowHealth` ครบทุก workflow (contentAgent, productAgent, fulfillmentAgent, financeAgent, ceoOrchestrator)
 - [ ] `successRate` ทุก workflow > 80% (ถ้าต่ำกว่า: action ทันที)
 - [ ] `improvementProposals` มี priority ชัดเจน
 - [ ] อ่าน `priorityActions` → implement Priority 1 ภายในสัปดาห์นี้

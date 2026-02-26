@@ -34,7 +34,7 @@ CEO Agent  ←── OpenAI GPT-4o (temp: 0.4, max 3000 tokens)
     │      ←── Tool: Read KPI Reports (Google Sheets → KPI_Dashboard)
     │      ←── Tool: Market Intelligence (Brave Search API)
     │
-    │  Output JSON: weekNumber, priorities, departmentPlans, riskFlags, revenueTarget
+    │  Output JSON: weekNumber, contentThemes, agentTasks, revenueTarget, riskFlags, trendingOpportunity
     ▼
 Format Weekly Plan
     │  รวม weekly_plan + week + generated_at

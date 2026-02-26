@@ -118,7 +118,7 @@ SG.xxxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 
 ---
 
-### Step 5 — ทดสอบก่อน Activate Sales Agent
+### Step 5 — ทดสอบก่อน Activate Fulfillment Agent
 
 ใน n8n เปิด `06_Fulfillment_Agent` → ทดสอบโดยยิง Stripe test webhook ดู output:
 
