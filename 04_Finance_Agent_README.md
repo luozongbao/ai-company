@@ -11,7 +11,7 @@
 
 ## วัตถุประสงค์
 
-Finance Agent ทำหน้าที่เป็น **CFO อัตโนมัติ** รายงานสถานะการเงินทุกสัปดาห์ ดึงข้อมูล revenue จาก 3 streams: **Stripe** (digital product sales + newsletter subscriptions), **Affiliate Income** (จาก sheet), และ **OpenAI costs** พร้อมคำนวณ net profit + alerts ถ้ามีสิ่งผิดปกติ บันทึกผลลัพธ์ใน Google Sheets 2 ที่พร้อมกัน
+Finance Agent ทำหน้าที่เป็น **CFO อัตโนมัติ** รายงานสถานะการเงินทุกสัปดาห์ ดึงข้อมูล revenue จาก 3 streams: **Stripe** (digital product sales + newsletter subscriptions), **Affiliate Income** (จาก sheet), และ **DeepSeek costs** พร้อมคำนวณ net profit + alerts ถ้ามีสิ่งผิดปกติ บันทึกผลลัพธ์ใน Google Sheets 2 ที่พร้อมกัน
 
 ---
 
@@ -24,7 +24,7 @@ Schedule Trigger (ทุกศุกร์ 18:00)
 Set Finance Context
     │  กำหนด report_prompt (week ending date), week_end timestamp
     ▼
-Finance Agent  ←── OpenAI GPT-4o (temp: 0.1, max 3000 tokens)
+Finance Agent  ←── DeepSeek Chat (temp: 0.1, max 3000 tokens)
     │           ←── Finance Memory (session: "finance_agent_memory")
     │           ←── Tool: Stripe Revenue (GET /v1/charges — 7 วันล่าสุด)
     │           ←── Tool: API Cost Tracking (GET /v1/organization/usage/completions)
@@ -49,7 +49,7 @@ Update KPI Dashboard
 | Tool | ประเภท | หน้าที่ |
 |---|---|---|
 | `get_stripe_transactions` | HTTP (Stripe API) | ดึง charges 100 รายการล่าสุดใน 7 วัน |
-| `get_openai_usage` | HTTP (OpenAI Admin API) | ดึง token usage + cost ช่วง 7 วัน (`/v1/organization/usage/completions`) |
+| `get_deepseek_usage` | HTTP (DeepSeek API (balance endpoint)) | ดึง token usage + cost ช่วง 7 วัน (`/v1/organization/usage/completions`) |
 | `read_previous_reports` | HTTP (Google Sheets API) | ดึง report สัปดาห์ก่อนเพื่อ trend comparison |
 
 ---
@@ -88,7 +88,7 @@ Update KPI Dashboard
 | Condition | Alert |
 |---|---|
 | Expenses > 30% of revenue | ⚠️ Cost ratio too high |
-| OpenAI cost > $15/week | 🚨 API cost spike |
+| DeepSeek cost > $15/week | 🚨 API cost spike |
 | Revenue < previous week by > 20% | ⚠️ Revenue declining |
 
 ---
@@ -97,7 +97,7 @@ Update KPI Dashboard
 
 | Credential | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` + `Tool: API Cost Tracking` | n8n → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` + `Tool: API Cost Tracking` | n8n → Credentials → DeepSeek API (OpenAI-compatible) |
 | Google Sheets OAuth2 | `Save Financial Report`, `Update KPI Dashboard`, `Tool: Historical Reports` | n8n → Credentials → Google Sheets OAuth2 |
 | Stripe Secret Key (Header Auth) | `Tool: Stripe Revenue` | n8n → Credentials → HTTP Header Auth → `Authorization: Bearer sk_live_...` — ดู [SETUP_Stripe.md](SETUP_Stripe.md) |
 | `REPLACE_WITH_SPREADSHEET_ID` | ทุก Google Sheets node | เปลี่ยนใน node parameters |

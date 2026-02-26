@@ -32,7 +32,7 @@ Manual Trigger
 Set Research Prompt
     │  กำหนด prompt: วิเคราะห์ AI automation content niche + affiliate programs + product lineup
     ▼
-Strategy Agent  ←── OpenAI GPT-4o (temp: 0.3)
+Strategy Agent  ←── DeepSeek Chat (temp: 0.3)
     │           ←── Window Buffer Memory
     │           ←── Tool: Web Research (Brave Search API)
     │           ←── Tool: Score & Rank (Code — weighted scoring)
@@ -80,7 +80,7 @@ Save Strategy Decision
 
 | Credential | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` node | n8n → Settings → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` node | n8n → Settings → Credentials → OpenAI API |
 | Brave Search Header Auth | `Tool: Web Research` | n8n → Credentials → HTTP Header Auth → `X-Subscription-Token: YOUR_KEY` |
 | Google Sheets OAuth2 | `Save Strategy Decision` | n8n → Credentials → Google Sheets OAuth2 |
 | `REPLACE_WITH_SPREADSHEET_ID` | `Save Strategy Decision` | เปลี่ยนใน node parameter |

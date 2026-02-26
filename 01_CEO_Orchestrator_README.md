@@ -29,7 +29,7 @@ Schedule Trigger (ทุกจันทร์ 07:00)
 Set Weekly Context
     │  กำหนด: week_number, current_date, planning_prompt
     ▼
-CEO Agent  ←── OpenAI GPT-4o (temp: 0.4, max 3000 tokens)
+CEO Agent  ←── DeepSeek Chat (temp: 0.4, max 3000 tokens)
     │      ←── CEO Memory (session: "ceo_agent_memory")
     │      ←── Tool: Read KPI Reports (Google Sheets → KPI_Dashboard)
     │      ←── Tool: Market Intelligence (Brave Search API)
@@ -83,7 +83,7 @@ Save to Google Sheets (sheet: Weekly_Plans)
 
 | Credential | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` node | n8n → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` node | n8n → Credentials → DeepSeek API (OpenAI-compatible) |
 | Google Sheets OAuth2 | `Tool: Read KPI Reports`, `Save to Google Sheets` | n8n → Credentials → Google Sheets OAuth2 |
 | Brave Search Header Auth | `Tool: Market Intelligence` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | `REPLACE_WITH_SPREADSHEET_ID` | Google Sheets nodes | เปลี่ยนใน node parameters ทุกตัว |

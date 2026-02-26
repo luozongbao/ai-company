@@ -58,7 +58,7 @@
         "promptType": "define",
         "text": "={{ $json.product_prompt }}",
         "options": {
-          "systemMessage": "You are the Product Agent for an AI Content Media & Digital Products company. Every week your job is to create ONE new digital product that can be sold instantly via Stripe with zero manual work.\n\nProduct Types (rotate weekly):\n- **Prompt Pack**: 30–50 carefully crafted GPT-4o prompts for a specific use case (e.g., 'Freelancer Productivity Prompts', 'n8n Workflow Prompts')\n- **n8n Workflow Template**: A complete n8n workflow JSON + setup guide for a common automation\n- **AI Starter Guide**: 1,500–2,500 word PDF-ready guide on using AI for a specific task\n- **Automation Checklist**: Detailed checklist + resources for automating a specific business process\n\nProcess:\n1. MARKET RESEARCH: Use web_search to find what AI automation products are selling well this week. Look for Reddit/Twitter/forums discussions about automation pain points.\n2. PRODUCT SELECTION: Pick the product type and topic with highest demand signal this week.\n3. CREATE PRODUCT: Write the complete product content (ready to deliver as-is via email):\n   - Full title and subtitle\n   - Price recommendation ($9 / $19 / $29)\n   - Short description (for Ghost/Stripe product page, 100 words)\n   - Complete product content (all prompts, or full guide, or full workflow JSON + instructions)\n   - Delivery format: Markdown text ready to be converted to PDF or .txt file\n4. GHOST POST: Create a paid Ghost post draft with the product as gated content.\n\nOutput JSON: { productType, title, subtitle, price, description, content, deliveryFormat, ghostPostReady, weekNumber, demandSignal }\n\nFORBIDDEN: Plagiarism, fake reviews, misleading product descriptions, overpricing thin content."
+          "systemMessage": "You are the Product Agent for an AI Content Media & Digital Products company. Every week your job is to create ONE new digital product that can be sold instantly via Stripe with zero manual work.\n\nProduct Types (rotate weekly):\n- **Prompt Pack**: 30–50 carefully crafted GPT-4o prompts for a specific use case (e.g., 'Freelancer Productivity Prompts', 'n8n Workflow Prompts')\n- **n8n Workflow Template**: A complete n8n workflow JSON + setup guide for a common automation\n- **AI Starter Guide**: 1,500–2,500 word PDF-ready guide on using AI for a specific task\n- **Automation Checklist**: Detailed checklist + resources for automating a specific business process\n\nProcess:\n1. MARKET RESEARCH: Use web_search to find what AI automation products are selling well this week. Look for Reddit/Twitter/forums discussions about automation pain points.\n2. PRODUCT SELECTION: Pick the product type and topic with highest demand signal this week.\n3. CREATE PRODUCT: Write the complete product content (ready to deliver as-is via email):\n   - Full title and subtitle\n   - Price recommendation ($9 / $19 / $29)\n   - Short description (for WordPress/Stripe product page, 100 words)\n   - Complete product content (all prompts, or full guide, or full workflow JSON + instructions)\n   - Delivery format: Markdown text ready to be converted to PDF or .txt file\n4. GHOST POST: Create a paid WordPress post draft with the product as gated content.\n\nOutput JSON: { productType, title, subtitle, price, description, content, deliveryFormat, ghostPostReady, weekNumber, demandSignal }\n\nFORBIDDEN: Plagiarism, fake reviews, misleading product descriptions, overpricing thin content."
         }
       },
       "id": "d4e5f6g7-0004-0004-0004-000000000003",
@@ -72,14 +72,15 @@
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.6,
-          "maxTokens": 4000
+          "maxTokens": 4000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "d4e5f6g7-0004-0004-0004-000000000004",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
@@ -88,8 +89,8 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -151,13 +152,13 @@
     },
     {
       "parameters": {
-        "name": "create_ghost_product_post",
-        "description": "Create a paid Ghost post (gated content) for the new digital product. The post will serve as the product page and delivery mechanism for paid subscribers. Provide JSON: { title, html_content, price_label, excerpt }",
+        "name": "create_wordpress_product_post",
+        "description": "Create a draft WordPress post for the new digital product. The post serves as the product landing/sales page. Provide JSON: { title, html_content, excerpt }",
         "language": "javaScript",
-        "jsCode": "const params = $input.first().json;\nconst title   = params.title   || 'New AI Product';\nconst excerpt = params.excerpt || params.description || '';\nconst html    = params.html_content || `<p>${params.content || ''}</p>`;\n\nconst ghostUrl = $env.GHOST_API_URL || '';\nconst ghostKey = $env.GHOST_ADMIN_API_KEY || '';\nif (!ghostUrl || !ghostKey) throw new Error('GHOST_API_URL and GHOST_ADMIN_API_KEY env vars must be set');\n\nconst payload = {\n  posts: [{\n    title,\n    html,\n    excerpt,\n    status: 'draft',\n    visibility: 'paid',\n    tags: [{ name: 'product' }, { name: 'digital-download' }]\n  }]\n};\n\nconst response = await this.helpers.httpRequest({\n  method: 'POST',\n  url: `${ghostUrl}/ghost/api/admin/posts/`,\n  headers: {\n    'Authorization': `Ghost ${ghostKey}`,\n    'Content-Type': 'application/json',\n    'Accept-Version': 'v5.0'\n  },\n  body: JSON.stringify(payload)\n});\n\nconst post = response.posts?.[0];\nreturn { success: true, postId: post?.id, postUrl: post?.url, title };"
+        "jsCode": "const params = $input.first().json;\nconst title   = params.title   || 'New AI Product';\nconst excerpt = params.excerpt || params.description || '';\nconst content = params.html_content || `<p>${params.content || ''}</p>`;\n\nconst wpUrl  = $env.WORDPRESS_URL || '';\nconst wpUser = $env.WORDPRESS_USERNAME || '';\nconst wpPass = $env.WORDPRESS_APP_PASSWORD || '';\nif (!wpUrl || !wpUser || !wpPass)\n  throw new Error('WORDPRESS_URL, WORDPRESS_USERNAME, WORDPRESS_APP_PASSWORD env vars must be set');\n\nconst auth = Buffer.from(`${wpUser}:${wpPass}`).toString('base64');\n\nconst payload = {\n  title,\n  content,\n  excerpt,\n  status: 'draft',\n  comment_status: 'closed'\n};\n\nconst response = await this.helpers.httpRequest({\n  method:  'POST',\n  url:     `${wpUrl}/wp-json/wp/v2/posts`,\n  headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' },\n  body:    JSON.stringify(payload)\n});\n\nreturn { success: true, postId: response.id, postLink: response.link, title };"
       },
       "id": "d4e5f6g7-0004-0004-0004-000000000007",
-      "name": "Tool: Publish to Ghost",
+      "name": "Tool: Publish to WordPress",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1.1,
       "position": [
@@ -259,17 +260,6 @@
         ]
       ]
     },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Product Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Product Memory": {
       "ai_memory": [
         [
@@ -292,17 +282,6 @@
         ]
       ]
     },
-    "Tool: Publish to Ghost": {
-      "ai_tool": [
-        [
-          {
-            "node": "Product Agent",
-            "type": "ai_tool",
-            "index": 1
-          }
-        ]
-      ]
-    },
     "Tool: Read Product Catalog": {
       "ai_tool": [
         [
@@ -310,6 +289,28 @@
             "node": "Product Agent",
             "type": "ai_tool",
             "index": 2
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Publish to WordPress": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_tool",
+            "index": 1
           }
         ]
       ]
@@ -333,5 +334,5 @@
       "createdAt": "2026-02-25"
     }
   ],
-  "notes": "Runs every Tuesday 09:00. Product Agent researches weekly demand, creates one new digital product (prompt pack / n8n template / AI guide / checklist), publishes as paid Ghost draft, logs to Product_Catalog sheet. Required env vars: GHOST_API_URL, GHOST_ADMIN_API_KEY. Create 'Product_Catalog' sheet with columns: created_at, week_number, product_result, status."
+  "notes": "Runs every Tuesday 09:00. Product Agent researches weekly demand, creates one new digital product (prompt pack / n8n template / AI guide / checklist), publishes as paid Ghost draft, logs to Product_Catalog sheet. Required env vars: WORDPRESS_URL, GHOST_ADMIN_API_KEY. Create 'Product_Catalog' sheet with columns: created_at, week_number, product_result, status."
 }

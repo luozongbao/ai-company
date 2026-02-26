@@ -58,7 +58,7 @@
         "promptType": "define",
         "text": "={{ $json.report_prompt }}",
         "options": {
-          "systemMessage": "You are the Finance Agent for an AI Content Media & Digital Products company. The company earns revenue from 3 streams: (1) Affiliate commissions, (2) Newsletter subscriptions via Ghost/Stripe, (3) Digital product one-time sales via Stripe.\n\nWeekly responsibilities:\n\n1. REVENUE TRACKING:\n   - Pull Stripe data: product sales + subscription payments from last 7 days\n   - Categorize by stream: digital_product / newsletter_subscription / affiliate\n   - Affiliate revenue: read from Affiliate_Income sheet (manually entered or via affiliate API)\n   - Calculate total weekly revenue + MRR from subscriptions\n\n2. EXPENSE TRACKING:\n   - OpenAI API costs (usage from Organization API)\n   - Infrastructure: n8n hosting, Ghost hosting\n   - Stripe fees: 2.9% + $0.30 per transaction\n   - Tool subscriptions (Buffer, domain, etc.)\n   - Calculate net profit = revenue − all expenses\n\n3. PROFIT ANALYSIS:\n   - Best-performing revenue stream this week\n   - Revenue per content piece (from Content_Log)\n   - Affiliate conversion value\n   - Product sales trend week-over-week\n\n4. FORECASTING:\n   - Project next 4 weeks based on subscriber growth, avg products sold/week, affiliate click trend\n   - Time-to-$1k/month estimate\n\n5. ALERTS:\n   - Flag if OpenAI cost > $15/week\n   - Flag if zero product sales for > 2 consecutive weeks\n   - Flag if newsletter churn > 5% this week\n   - Flag if affiliate clicks = 0 for > 1 week\n\nOutput JSON: { weeklyRevenue, revenueByStream, weeklyExpenses, netProfit, mrrSubscriptions, forecast, alerts, recommendations }"
+          "systemMessage": "You are the Finance Agent for an AI Content Media & Digital Products company. The company earns revenue from 3 streams: (1) Affiliate commissions, (2) Newsletter subscriptions via WordPress/Stripe, (3) Digital product one-time sales via Stripe.\n\nWeekly responsibilities:\n\n1. REVENUE TRACKING:\n   - Pull Stripe data: product sales + subscription payments from last 7 days\n   - Categorize by stream: digital_product / newsletter_subscription / affiliate\n   - Affiliate revenue: read from Affiliate_Income sheet (manually entered or via affiliate API)\n   - Calculate total weekly revenue + MRR from subscriptions\n\n2. EXPENSE TRACKING:\n   - DeepSeek API costs (usage from Organization API)\n   - Infrastructure: n8n hosting, Ghost hosting\n   - Stripe fees: 2.9% + $0.30 per transaction\n   - Tool subscriptions (Buffer, domain, etc.)\n   - Calculate net profit = revenue − all expenses\n\n3. PROFIT ANALYSIS:\n   - Best-performing revenue stream this week\n   - Revenue per content piece (from Content_Log)\n   - Affiliate conversion value\n   - Product sales trend week-over-week\n\n4. FORECASTING:\n   - Project next 4 weeks based on subscriber growth, avg products sold/week, affiliate click trend\n   - Time-to-$1k/month estimate\n\n5. ALERTS:\n   - Flag if OpenAI cost > $15/week\n   - Flag if zero product sales for > 2 consecutive weeks\n   - Flag if newsletter churn > 5% this week\n   - Flag if affiliate clicks = 0 for > 1 week\n\nOutput JSON: { weeklyRevenue, revenueByStream, weeklyExpenses, netProfit, mrrSubscriptions, forecast, alerts, recommendations }"
         }
       },
       "id": "e5f6g7h8-0005-0005-0005-000000000003",
@@ -72,14 +72,15 @@
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.1,
-          "maxTokens": 3000
+          "maxTokens": 3000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "e5f6g7h8-0005-0005-0005-000000000004",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
@@ -88,8 +89,8 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -147,30 +148,13 @@
     },
     {
       "parameters": {
-        "name": "get_openai_usage",
-        "description": "Fetch OpenAI API token usage and cost data for the past 7 days to track LLM expenses. Uses the Organization Usage API.",
+        "name": "get_deepseek_usage",
+        "description": "Fetch DeepSeek API account balance to track remaining LLM credit and estimate weekly API costs.",
         "method": "GET",
-        "url": "https://api.openai.com/v1/organization/usage/completions",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "openAiApi",
-        "sendQuery": true,
-        "parametersQuery": {
-          "values": [
-            {
-              "name": "start_time",
-              "value": "={{ Math.floor($now.minus({days: 7}).toMillis() / 1000) }}"
-            },
-            {
-              "name": "end_time",
-              "value": "={{ Math.floor($now.toMillis() / 1000) }}"
-            },
-            {
-              "name": "limit",
-              "value": "100"
-            }
-          ]
-        },
-        "options": {}
+        "url": "https://api.deepseek.com/user/balance",
+        "authentication": "genericCredentialType",
+        "options": {},
+        "genericAuthType": "httpHeaderAuth"
       },
       "id": "e5f6g7h8-0005-0005-0005-000000000007",
       "name": "Tool: API Cost Tracking",
@@ -179,7 +163,13 @@
       "position": [
         1140,
         520
-      ]
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
+        }
+      }
     },
     {
       "parameters": {
@@ -323,17 +313,6 @@
         ]
       ]
     },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Finance Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Finance Memory": {
       "ai_memory": [
         [
@@ -377,6 +356,17 @@
           }
         ]
       ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Finance Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -397,5 +387,5 @@
       "createdAt": "2026-02-24"
     }
   ],
-  "notes": "Runs every Friday at 6:00pm. Pulls Stripe revenue + OpenAI costs, generates profit report, saves to Google Sheets. Low temperature (0.1) for accurate financial analysis."
+  "notes": "Runs every Friday at 6:00pm. Pulls Stripe revenue + DeepSeek costs, generates profit report, saves to Google Sheets. Low temperature (0.1) for accurate financial analysis."
 }

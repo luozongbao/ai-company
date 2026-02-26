@@ -40,7 +40,7 @@ Extract Order Details
     │  customer_email, customer_name, product_type, product_title
     │  amount_paid, session_id, fulfillment_prompt
     ▼
-Fulfillment Agent  ←── OpenAI GPT-4o (temp: 0.3, max 4000 tokens)
+Fulfillment Agent  ←── DeepSeek Chat (temp: 0.3, max 4000 tokens)
     │             ←── Tool: Read Product Catalog (Google Sheets)
     │             ←── Tool: Send Delivery Email (SendGrid via toolCode)
     │
@@ -66,7 +66,7 @@ Log to Order Log  (Google Sheets append → Order_Log sheet)
 
 | Credential | ประเภท | ใช้ใน Node |
 |---|---|---|
-| OpenAI API | OpenAI API | `OpenAI GPT-4o` |
+| OpenAI API | OpenAI API | `DeepSeek Chat` |
 | Google Sheets OAuth2 | Google Sheets OAuth2 | `Tool: Read Product Catalog`, `Log to Order Log` |
 
 **n8n Environment Variables (Settings → Environment Variables):**

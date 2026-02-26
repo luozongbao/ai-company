@@ -29,7 +29,7 @@ Set Shutdown Context
     │  กำหนด: shutdown_reason, shutdown_time,
     │          workflow_ids_to_deactivate (list)
     ▼
-Generate Final Report  ←── OpenAI GPT-4o (temp: 0.2, max 4000 tokens)
+Generate Final Report  ←── DeepSeek Chat (temp: 0.2, max 4000 tokens)
     │                  ←── Shutdown Memory
     │                  ←── Tool: Final Financial Data (Google Sheets → Financial_Reports)
     │
@@ -97,7 +97,7 @@ Shutdown Complete
 
 | Credential / Env | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` | n8n → Credentials → DeepSeek API (OpenAI-compatible) |
 | Google Sheets OAuth2 | `Tool: Final Financial Data`, `Save Final Report` | n8n → Credentials → Google Sheets OAuth2 |
 | `N8N_API_KEY` | `Deactivate All Workflows` (Code node) | n8n Settings → n8n API → Create API Key → ตั้งเป็น env var |
 | `N8N_HOST` | `Deactivate All Workflows` (Code node) | Docker `-e N8N_HOST=http://your-server-ip:5678` |

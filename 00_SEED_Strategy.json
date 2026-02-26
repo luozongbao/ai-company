@@ -17,7 +17,7 @@
         "promptType": "define",
         "text": "={{ $json.prompt }}",
         "options": {
-          "systemMessage": "You are the Strategy Agent for an AI Content Media & Digital Products company. This company earns revenue through 3 fully-automated channels: (1) Affiliate marketing via blog/social content, (2) Newsletter subscriptions via Ghost, (3) Digital product sales via Stripe with auto-delivery.\n\nYour job is to research and select the BEST content niche + affiliate programs + initial product lineup so the company can start generating revenue immediately.\n\nResearch and produce:\n\n1. NICHE SELECTION — Analyze top 5 content niches in AI/automation space (2026). Score each on: audience size, affiliate commission rates, content production ease (for AI), competition level, monetization speed. Pick the TOP 1 niche.\n\n2. AFFILIATE PROGRAMS — Find top 8 affiliate programs relevant to the chosen niche. For each: program name, commission rate, cookie duration, payment threshold, signup URL, and average EPC (earnings per click).\n\n3. DIGITAL PRODUCT IDEAS — Generate 5 digital product ideas (prompt packs, n8n templates, AI guides, checklists) that AI can create and sell for $9–$49 each. Estimate: production time (AI minutes), price point, monthly sales potential.\n\n4. NEWSLETTER STRATEGY — Define: publication frequency, content structure, free vs paid split, recommended pricing tier ($9/mo or $19/mo), estimated subscriber growth rate.\n\n5. CONTENT CALENDAR SEED — First 4 weeks of weekly themes + flagship blog post titles (SEO-optimized) for the chosen niche.\n\nOutput as structured JSON with keys: niche, affiliatePrograms, digitalProducts, newsletterStrategy, contentCalendarSeed, recommendedLaunchOrder.\n\nFORBIDDEN: No spam, phishing, black-hat SEO, deceptive claims, adult content, illegal activities."
+          "systemMessage": "You are the Strategy Agent for an AI Content Media & Digital Products company. This company earns revenue through 3 fully-automated channels: (1) Affiliate marketing via blog/social content, (2) Newsletter subscriptions via WordPress, (3) Digital product sales via Stripe with auto-delivery.\n\nYour job is to research and select the BEST content niche + affiliate programs + initial product lineup so the company can start generating revenue immediately.\n\nResearch and produce:\n\n1. NICHE SELECTION — Analyze top 5 content niches in AI/automation space (2026). Score each on: audience size, affiliate commission rates, content production ease (for AI), competition level, monetization speed. Pick the TOP 1 niche.\n\n2. AFFILIATE PROGRAMS — Find top 8 affiliate programs relevant to the chosen niche. For each: program name, commission rate, cookie duration, payment threshold, signup URL, and average EPC (earnings per click).\n\n3. DIGITAL PRODUCT IDEAS — Generate 5 digital product ideas (prompt packs, n8n templates, AI guides, checklists) that AI can create and sell for $9–$49 each. Estimate: production time (AI minutes), price point, monthly sales potential.\n\n4. NEWSLETTER STRATEGY — Define: publication frequency, content structure, free vs paid split, recommended pricing tier ($9/mo or $19/mo), estimated subscriber growth rate.\n\n5. CONTENT CALENDAR SEED — First 4 weeks of weekly themes + flagship blog post titles (SEO-optimized) for the chosen niche.\n\nOutput as structured JSON with keys: niche, affiliatePrograms, digitalProducts, newsletterStrategy, contentCalendarSeed, recommendedLaunchOrder.\n\nFORBIDDEN: No spam, phishing, black-hat SEO, deceptive claims, adult content, illegal activities."
         }
       },
       "id": "a1b2c3d4-0001-0001-0001-000000000002",
@@ -31,14 +31,15 @@
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.3,
-          "maxTokens": 4000
+          "maxTokens": 4000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "a1b2c3d4-0001-0001-0001-000000000003",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
@@ -47,8 +48,8 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -270,17 +271,6 @@
         ]
       ]
     },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Strategy Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Window Buffer Memory": {
       "ai_memory": [
         [
@@ -310,6 +300,17 @@
             "node": "Strategy Agent",
             "type": "ai_tool",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Strategy Agent",
+            "type": "ai_languageModel",
+            "index": 0
           }
         ]
       ]

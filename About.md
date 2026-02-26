@@ -13,12 +13,12 @@
 
 ### 2. Newsletter Subscription
 - AI เขียน newsletter เกี่ยวกับ AI automation ทุกสัปดาห์
-- เผยแพร่ผ่าน Ghost (free tier → paid subscription $9/เดือน)
+- เผยแพร่ผ่าน WordPress (free tier → paid subscription $9/เดือน)
 - รายได้เป็น recurring — สะสมทุกเดือน
 
 ### 3. Digital Products (Auto-Delivered)
 - AI สร้าง prompt packs, n8n workflow templates, AI starter guides
-- ขายผ่าน Ghost/Stripe (one-time payment)
+- ขายผ่าน WordPress/Stripe (one-time payment)
 - เมื่อลูกค้าจ่ายเงิน → Stripe webhook → AI generate product → SendGrid ส่ง email อัตโนมัติ
 - ไม่มีคนเข้ามาเลยตั้งแต่ต้นจนจบ
 
@@ -42,7 +42,7 @@
 02_Content_Agent    03_Product_Agent   ← ทำงานคู่กันทุกวัน/สัปดาห์
 (content daily)     (products weekly)
         ↓                       ↓
-            [Ghost Blog + Social + Stripe Store]
+            [WordPress + Social + Stripe Store]
                         ↓
             [ลูกค้าจ่ายเงิน → Stripe Webhook]
                         ↓

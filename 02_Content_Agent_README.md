@@ -11,7 +11,7 @@
 
 ## วัตถุประสงค์
 
-Content Agent สร้าง **content SEO + affiliate อัตโนมัติทุกวัน** — ตั้งแต่เลือก topic, เขียน blog post พร้อม affiliate links, สร้าง social posts, จนถึง publish ขึ้น Ghost + Buffer โดยไม่ต้องมีมนุษย์ช่วย
+Content Agent สร้าง **content SEO + affiliate อัตโนมัติทุกวัน** — ตั้งแต่เลือก topic, เขียน blog post พร้อม affiliate links, สร้าง social posts, จนถึง publish ขึ้น WordPress + Buffer โดยไม่ต้องมีมนุษย์ช่วย
 
 **3 รายได้ที่ content นี้สร้าง:**
 - **Affiliate commission** — ลูกค้า click link ใน blog → ซื้อ tool → เราได้ commission
@@ -29,7 +29,7 @@ Schedule Trigger (ทุกวัน 08:00)
 Set Daily Context
     │  กำหนด today (formatted date), content_prompt
     ▼
-Content Agent  ←── OpenAI GPT-4o (temp: 0.7, max 4000 tokens)
+Content Agent  ←── DeepSeek Chat (temp: 0.7, max 4000 tokens)
     │          ←── Marketing Memory (session: "marketing_agent_memory")
     │            ←── Tool: Trending Topics (Brave Search — freshness: last 24h)
     │            ←── Tool: SEO Keywords (Brave Suggest API)
@@ -48,7 +48,7 @@ Content Generated? (IF node)
     │         ┌────┴────┐
     │         ▼         ▼
     │   Publish via   Publish to
-    │   Buffer API    Ghost Blog
+    │   Buffer API    WordPress
     │  (Twitter/      (newsletter
     │  LinkedIn)       draft)
     │
@@ -80,7 +80,7 @@ Content Generated? (IF node)
 - LinkedIn post (300–500 คำ)
 - Scheduled 2 ชั่วโมงหลัง generate
 
-### Ghost Blog
+### WordPress
 - สร้าง post ใหม่เป็น **draft** อัตโนมัติ
 - ต้องการ human review ก่อน publish จริง (แนะนำ)
 
@@ -90,13 +90,13 @@ Content Generated? (IF node)
 
 | Credential / Env Var | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` | n8n → Credentials → DeepSeek API (OpenAI-compatible) |
 | Google Sheets OAuth2 | `Log Content to Sheets`, `Log Error` | n8n → Credentials → Google Sheets OAuth2 |
 | Brave Search Header Auth | `Tool: Trending Topics`, `Tool: SEO Keywords` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | Buffer HTTP Header Auth | `Publish via Buffer` | `Authorization: Bearer BUFFER_ACCESS_TOKEN` |
-| Ghost HTTP Header Auth | `Publish to Ghost Blog` | `Authorization: Ghost YOUR_ADMIN_API_KEY` |
+| WordPress HTTP Header Auth | `Publish to WordPress` | `Authorization: WordPress YOUR_ADMIN_API_KEY` |
 | `BUFFER_TWITTER_PROFILE_ID` | env var | n8n → Settings → Environment Variables |
-| `GHOST_API_URL` | env var | n8n → Settings → Environment Variables (เช่น `https://your-blog.com`) |
+| `WORDPRESS_URL` | env var | n8n → Settings → Environment Variables (เช่น `https://your-blog.com`) |
 
 ---
 
@@ -105,11 +105,11 @@ Content Generated? (IF node)
 1. ตั้งค่า credentials และ environment variables ทั้งหมดให้ครบ
 2. สร้าง sheet `Content_Log` และ `Error_Log` ใน Google Spreadsheet
 3. **ทดสอบก่อน activate:** Execute manual 1 ครั้ง → ตรวจ content ใน Sheets
-4. ตรวจ Ghost draft ว่า format ถูกต้อง
+4. ตรวจ WordPress draft ว่า format ถูกต้อง
 5. ตรวจ Buffer ว่า post schedule แล้ว
 6. **Activate** workflow
 
-> **แนะนำ:** ช่วง 2 สัปดาห์แรก ดู Ghost drafts ก่อน publish เพื่อ QC content quality
+> **แนะนำ:** ช่วง 2 สัปดาห์แรก ดู WordPress drafts ก่อน publish เพื่อ QC content quality
 
 ---
 
@@ -119,7 +119,7 @@ Content Generated? (IF node)
 |---|---|---|---|
 | Twitter Thread | Twitter/X (via Buffer) | 8–12 tweets | Educational, value-driven, CTA |
 | LinkedIn Post | LinkedIn (via Buffer) | 300–500 คำ | Professional insight, business angle |
-| Newsletter Section | Ghost Blog (draft) | 400–600 คำ | Deep dive 1 topic |
+| Newsletter Section | WordPress (draft) | 400–600 คำ | Deep dive 1 topic |
 | Blog Post Outline | Google Sheets | Structured H2s | Long-tail SEO keyword |
 
 ---
@@ -149,7 +149,7 @@ Content Generated? (IF node)
 
 - [ ] มี record ใหม่ใน `Content_Log` sheet ทุกวัน
 - [ ] `Error_Log` ว่างเปล่า (ถ้ามี error → ตรวจสอบทันที)
-- [ ] Ghost Blog มี draft post ใหม่อย่างน้อย 1 ชิ้น/วัน
+- [ ] WordPress มี draft post ใหม่อย่างน้อย 1 ชิ้น/วัน
 - [ ] Buffer มี post scheduled ไว้
 - [ ] Content ไม่มีข้อมูลผิดพลาด, misleading, หรือ hallucinated stats
 - [ ] SEO blog outline มี H2 structure ชัดเจน
@@ -163,7 +163,7 @@ Content Generated? (IF node)
 |---|---|---|
 | `Content Generated?` → NO ทุกวัน | Agent output ว่างเปล่า | ดู execution log → ตรวจ OpenAI connection |
 | Buffer ไม่รับ post | Profile ID ผิด หรือ token หมดอายุ | ตรวจ `BUFFER_TWITTER_PROFILE_ID` + refresh token |
-| Ghost post ไม่สร้าง | Admin API key ผิด หรือ URL ผิด | ดู Ghost Admin → Settings → Integrations → copy key ใหม่ |
+| WordPress post ไม่สร้าง | Admin API key ผิด หรือ URL ผิด | ดู WordPress Admin → Settings → Integrations → copy key ใหม่ |
 | Content ซ้ำ หรือ topic เดิมทุกวัน | Memory buffer เก็บ context ซ้ำ | ลบ session `marketing_agent_memory` ใน PostgreSQL แล้วรันใหม่ |
 | Brave API ไม่ตอบ | Rate limit (2000 req/mo free) | อัปเกรด plan หรือ cache results ด้วย Code node |
 
@@ -174,7 +174,7 @@ Content Generated? (IF node)
 | ความถี่ | งาน | เวลา |
 |---|---|---|
 | **ทุกวัน** (optional) | สุ่มตรวจ content 1 ชิ้นจาก Content_Log | 5 นาที |
-| **ทุกสัปดาห์** | Review Ghost drafts + publish ที่ดีที่สุด 2–3 ชิ้น | 15 นาที |
+| **ทุกสัปดาห์** | Review WordPress drafts + publish ที่ดีที่สุด 2–3 ชิ้น | 15 นาที |
 | **ทุกสัปดาห์** | ตรวจ Error_Log ว่ามี error สะสมไหม | 5 นาที |
-| **รายเดือน** | ตรวจว่า Buffer/Ghost credentials ยังใช้งานได้ | 5 นาที |
+| **รายเดือน** | ตรวจว่า Buffer/WordPress credentials ยังใช้งานได้ | 5 นาที |
 | **เมื่อพบ content ผิดพลาด** | Deactivate → แก้ system prompt → Activate ใหม่ | 20 นาที |

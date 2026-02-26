@@ -69,14 +69,15 @@
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.7,
-          "maxTokens": 4000
+          "maxTokens": 4000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "c3d4e5f6-0003-0003-0003-000000000004",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
@@ -85,8 +86,8 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -350,16 +351,16 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ ($env.GHOST_API_URL || 'https://your-ghost-blog.com') + '/ghost/api/admin/posts/' }}",
+        "url": "={{ ($env.WORDPRESS_URL || 'https://your-wordpress-site.com') + '/wp-json/wp/v2/posts' }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "contentType": "json",
-        "jsonBody": "={{ JSON.stringify({ posts: [{ title: $json.ghost_title, html: $json.ghost_html, status: 'draft', tags: [{ name: 'ai-automation' }, { name: 'newsletter' }], published_at: $now.toISO() }] }) }}",
+        "jsonBody": "={{ JSON.stringify({ title: $json.ghost_title, content: $json.ghost_html, status: 'draft', comment_status: 'closed' }) }}",
         "options": {}
       },
       "id": "c3d4e5f6-0003-0003-0003-000000000013",
-      "name": "Publish to Ghost Blog",
+      "name": "Publish to WordPress",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -369,8 +370,8 @@
       "continueOnFail": true,
       "credentials": {
         "httpHeaderAuth": {
-          "id": "REPLACE_WITH_GHOST_CREDENTIAL_ID",
-          "name": "Ghost Admin API"
+          "id": "REPLACE_WITH_WORDPRESS_CREDENTIAL_ID",
+          "name": "WordPress API"
         }
       }
     }
@@ -454,17 +455,6 @@
         ]
       ]
     },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Content Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Marketing Memory": {
       "ai_memory": [
         [
@@ -497,6 +487,17 @@
           }
         ]
       ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -517,5 +518,5 @@
       "createdAt": "2026-02-24"
     }
   ],
-  "notes": "Runs daily at 8:00am. Creates Twitter threads, LinkedIn posts, newsletter content, and blog outlines. Content is logged to Google Sheets AND published: Twitter/LinkedIn via Buffer API, newsletter as Ghost draft. Set BUFFER_TWITTER_PROFILE_ID, GHOST_API_URL env vars + add Buffer/Ghost credentials before activating."
+  "notes": "Runs daily at 8:00am. Creates Twitter threads, LinkedIn posts, newsletter content, and blog outlines. Content is logged to Google Sheets AND published: Twitter/LinkedIn via Buffer API, newsletter as Ghost draft. Set BUFFER_TWITTER_PROFILE_ID, WORDPRESS_URL env vars + add Buffer/WordPress credentials before activating."
 }

@@ -12,25 +12,38 @@
       "name": "Webhook: Stripe Payment",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "stripe-payment-webhook"
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
           "conditions": [
             {
               "id": "check-event-type",
               "leftValue": "={{ $json.body.type }}",
               "rightValue": "checkout.session.completed",
-              "operator": { "type": "string", "operation": "equals" }
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
             },
             {
               "id": "check-payment-status",
               "leftValue": "={{ $json.body.data.object.payment_status }}",
               "rightValue": "paid",
-              "operator": { "type": "string", "operation": "equals" }
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
             }
           ],
           "combinator": "and"
@@ -41,7 +54,10 @@
       "name": "Check: Is Paid?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -97,7 +113,10 @@
       "name": "Extract Order Details",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [700, 200]
+      "position": [
+        700,
+        200
+      ]
     },
     {
       "parameters": {
@@ -111,25 +130,32 @@
       "name": "Fulfillment Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [960, 200]
+      "position": [
+        960,
+        200
+      ]
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.3,
-          "maxTokens": 4000
+          "maxTokens": 4000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "f6g7h8i9-0007-0007-0007-000000000005",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [740, 420],
+      "position": [
+        740,
+        420
+      ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -147,7 +173,10 @@
       "name": "Tool: Read Product Catalog",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1180, 420]
+      "position": [
+        1180,
+        420
+      ]
     },
     {
       "parameters": {
@@ -160,7 +189,10 @@
       "name": "Tool: Send Delivery Email",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1.1,
-      "position": [1400, 420]
+      "position": [
+        1400,
+        420
+      ]
     },
     {
       "parameters": {
@@ -194,7 +226,10 @@
       "name": "Log to Order Log",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [1220, 200],
+      "position": [
+        1220,
+        200
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -207,38 +242,80 @@
   "connections": {
     "Webhook: Stripe Payment": {
       "main": [
-        [{ "node": "Check: Is Paid?", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Check: Is Paid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Check: Is Paid?": {
       "main": [
-        [{ "node": "Extract Order Details", "type": "main", "index": 0 }],
+        [
+          {
+            "node": "Extract Order Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
         []
       ]
     },
     "Extract Order Details": {
       "main": [
-        [{ "node": "Fulfillment Agent", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Fulfillment Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Fulfillment Agent": {
       "main": [
-        [{ "node": "Log to Order Log", "type": "main", "index": 0 }]
-      ]
-    },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [{ "node": "Fulfillment Agent", "type": "ai_languageModel", "index": 0 }]
+        [
+          {
+            "node": "Log to Order Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Read Product Catalog": {
       "ai_tool": [
-        [{ "node": "Fulfillment Agent", "type": "ai_tool", "index": 0 }]
+        [
+          {
+            "node": "Fulfillment Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Send Delivery Email": {
       "ai_tool": [
-        [{ "node": "Fulfillment Agent", "type": "ai_tool", "index": 1 }]
+        [
+          {
+            "node": "Fulfillment Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fulfillment Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -247,10 +324,18 @@
     "executionOrder": "v1",
     "saveManualExecutions": true
   },
-  "meta": { "instanceId": "ai-company-v1" },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
   "tags": [
-    { "name": "fulfillment", "createdAt": "2026-02-25" },
-    { "name": "ecommerce", "createdAt": "2026-02-25" }
+    {
+      "name": "fulfillment",
+      "createdAt": "2026-02-25"
+    },
+    {
+      "name": "ecommerce",
+      "createdAt": "2026-02-25"
+    }
   ],
   "notes": "WEBHOOK-triggered (not scheduled). Active 24/7. When Stripe fires checkout.session.completed: (1) extract order, (2) look up product in Product_Catalog sheet, (3) AI generates delivery email with full product content, (4) SendGrid delivers to customer instantly, (5) logs to Order_Log. Setup: in Stripe Dashboard → Developers → Webhooks → add endpoint: https://YOUR_N8N_URL/webhook/stripe-webhook → event: checkout.session.completed. Required env vars: SENDGRID_API_KEY, SENDGRID_FROM_EMAIL, COMPANY_NAME. Required sheets: Product_Catalog, Order_Log."
 }

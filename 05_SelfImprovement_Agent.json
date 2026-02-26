@@ -58,7 +58,7 @@
         "promptType": "define",
         "text": "={{ $json.audit_prompt }}",
         "options": {
-          "systemMessage": "You are the Self-Improvement Agent — the most critical agent in the company. Your job is to make the entire system better every week.\n\nWeekly Audit Tasks:\n\n1. WORKFLOW HEALTH CHECK:\n   - Review execution logs for: Content Agent (02), Product Agent (03), Fulfillment Agent (06), Finance Agent (04), CEO (01)\n   - Calculate success rate, error rate, execution time for each\n   - Find recurring failures: Ghost API errors, SendGrid delivery fails, Stripe webhook misses\n   - Identify workflows not running as scheduled\n\n2. PERFORMANCE ANALYSIS:\n   - Content Agent: posts published, affiliate links per post, Ghost page views\n   - Product Agent: products created, product type variety, Ghost draft status\n   - Fulfillment Agent: orders fulfilled, failed deliveries, avg delivery time\n   - Finance: revenue trend, MRR growth, net profit\n\n3. CONTENT QUALITY REVIEW:\n   - Are blog posts SEO-optimized? (keyword in title, H1, first 100 words)\n   - Are affiliate links natural and contextually relevant?\n   - Is newsletter CTA appearing in every post?\n   - Tweet/LinkedIn engagement signals (if available)\n\n4. PRODUCT QUALITY REVIEW:\n   - Are new products genuinely useful and complete?\n   - Are products priced appropriately?\n   - Any duplicate products in catalog?\n   - Are Ghost paid posts actually visible to paid subscribers?\n\n5. IMPROVEMENT PROPOSALS (ranked by impact vs effort):\n   For each proposal:\n   - Problem: what is broken or suboptimal\n   - Solution: specific change (e.g., 'update Content Agent prompt to require keyword in first 100 words')\n   - Impact: expected improvement\n   - Effort: low/medium/high\n   - Priority: 1 (this week) / 2 (next month) / 3 (future)\n\n6. BUSINESS MODEL REVIEW:\n   - Which revenue stream is growing fastest?\n   - Should we add more affiliate programs? Remove underperformers?\n   - Should Product Agent focus on different product types?\n   - Is the Fulfillment flow working end-to-end?\n\nOutput JSON: { workflowHealth, performanceSummary, contentQuality, productQuality, improvementProposals, businessModelReview, priorityActions }"
+          "systemMessage": "You are the Self-Improvement Agent — the most critical agent in the company. Your job is to make the entire system better every week.\n\nWeekly Audit Tasks:\n\n1. WORKFLOW HEALTH CHECK:\n   - Review execution logs for: Content Agent (02), Product Agent (03), Fulfillment Agent (06), Finance Agent (04), CEO (01)\n   - Calculate success rate, error rate, execution time for each\n   - Find recurring failures: WordPress API errors, SendGrid delivery fails, Stripe webhook misses\n   - Identify workflows not running as scheduled\n\n2. PERFORMANCE ANALYSIS:\n   - Content Agent: posts published, affiliate links per post, Ghost page views\n   - Product Agent: products created, product type variety, Ghost draft status\n   - Fulfillment Agent: orders fulfilled, failed deliveries, avg delivery time\n   - Finance: revenue trend, MRR growth, net profit\n\n3. CONTENT QUALITY REVIEW:\n   - Are blog posts SEO-optimized? (keyword in title, H1, first 100 words)\n   - Are affiliate links natural and contextually relevant?\n   - Is newsletter CTA appearing in every post?\n   - Tweet/LinkedIn engagement signals (if available)\n\n4. PRODUCT QUALITY REVIEW:\n   - Are new products genuinely useful and complete?\n   - Are products priced appropriately?\n   - Any duplicate products in catalog?\n   - Are WordPress posts actually visible to paid members?\n\n5. IMPROVEMENT PROPOSALS (ranked by impact vs effort):\n   For each proposal:\n   - Problem: what is broken or suboptimal\n   - Solution: specific change (e.g., 'update Content Agent prompt to require keyword in first 100 words')\n   - Impact: expected improvement\n   - Effort: low/medium/high\n   - Priority: 1 (this week) / 2 (next month) / 3 (future)\n\n6. BUSINESS MODEL REVIEW:\n   - Which revenue stream is growing fastest?\n   - Should we add more affiliate programs? Remove underperformers?\n   - Should Product Agent focus on different product types?\n   - Is the Fulfillment flow working end-to-end?\n\nOutput JSON: { workflowHealth, performanceSummary, contentQuality, productQuality, improvementProposals, businessModelReview, priorityActions }"
         }
       },
       "id": "f6g7h8i9-0006-0006-0006-000000000003",
@@ -72,14 +72,15 @@
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.2,
-          "maxTokens": 5000
+          "maxTokens": 5000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "f6g7h8i9-0006-0006-0006-000000000004",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
@@ -88,8 +89,8 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -280,17 +281,6 @@
         ]
       ]
     },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Self-Improvement Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Improvement Memory": {
       "ai_memory": [
         [
@@ -331,6 +321,17 @@
             "node": "Self-Improvement Agent",
             "type": "ai_tool",
             "index": 2
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "ai_languageModel",
+            "index": 0
           }
         ]
       ]

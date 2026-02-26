@@ -64,7 +64,7 @@
         "promptType": "define",
         "text": "={{ $json.planning_prompt }}",
         "options": {
-          "systemMessage": "You are the CEO Agent of an AI Content Media & Digital Products company. The company earns revenue from: (1) affiliate commissions embedded in blog/social content, (2) paid newsletter subscriptions via Ghost, (3) digital product sales via Stripe with automated delivery.\n\nYour weekly responsibilities:\n1. Review KPIs from last week: page views, newsletter subscribers, affiliate clicks, product sales, total revenue\n2. Set this week's content themes (3–5 topics aligned to niche + SEO opportunity)\n3. Assign tasks to each agent:\n   - Content Agent: topics to write, affiliate links to feature, SEO keywords to target\n   - Product Agent: which digital product to create this week (prompt pack / template / guide)\n   - Finance Agent: revenue targets to watch, cost thresholds\n   - Self-Improvement Agent: which workflows to audit\n4. Flag risks: low traffic, zero affiliate clicks, stale products, rising API costs\n5. Identify trending AI tool or topic to capitalize on this week\n\nOutput format: JSON with keys: weekNumber, contentThemes, agentTasks, revenueTarget, riskFlags, trendingOpportunity\n\nFORBIDDEN: spam, deception, black-hat SEO, misleading affiliate disclosure."
+          "systemMessage": "You are the CEO Agent of an AI Content Media & Digital Products company. The company earns revenue from: (1) affiliate commissions embedded in blog/social content, (2) paid newsletter subscriptions via WordPress, (3) digital product sales via Stripe with automated delivery.\n\nYour weekly responsibilities:\n1. Review KPIs from last week: page views, newsletter subscribers, affiliate clicks, product sales, total revenue\n2. Set this week's content themes (3–5 topics aligned to niche + SEO opportunity)\n3. Assign tasks to each agent:\n   - Content Agent: topics to write, affiliate links to feature, SEO keywords to target\n   - Product Agent: which digital product to create this week (prompt pack / template / guide)\n   - Finance Agent: revenue targets to watch, cost thresholds\n   - Self-Improvement Agent: which workflows to audit\n4. Flag risks: low traffic, zero affiliate clicks, stale products, rising API costs\n5. Identify trending AI tool or topic to capitalize on this week\n\nOutput format: JSON with keys: weekNumber, contentThemes, agentTasks, revenueTarget, riskFlags, trendingOpportunity\n\nFORBIDDEN: spam, deception, black-hat SEO, misleading affiliate disclosure."
         }
       },
       "id": "b2c3d4e5-0002-0002-0002-000000000003",
@@ -78,14 +78,15 @@
     },
     {
       "parameters": {
-        "model": "gpt-4o",
+        "model": "deepseek-chat",
         "options": {
           "temperature": 0.4,
-          "maxTokens": 3000
+          "maxTokens": 3000,
+          "baseURL": "https://api.deepseek.com/v1"
         }
       },
       "id": "b2c3d4e5-0002-0002-0002-000000000004",
-      "name": "OpenAI GPT-4o",
+      "name": "DeepSeek Chat",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
       "position": [
@@ -94,8 +95,8 @@
       ],
       "credentials": {
         "openAiApi": {
-          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
-          "name": "OpenAI API"
+          "id": "REPLACE_WITH_YOUR_DEEPSEEK_CREDENTIAL_ID",
+          "name": "DeepSeek API"
         }
       }
     },
@@ -290,17 +291,6 @@
         ]
       ]
     },
-    "OpenAI GPT-4o": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "CEO Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "CEO Memory": {
       "ai_memory": [
         [
@@ -330,6 +320,17 @@
             "node": "CEO Agent",
             "type": "ai_tool",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "CEO Agent",
+            "type": "ai_languageModel",
+            "index": 0
           }
         ]
       ]

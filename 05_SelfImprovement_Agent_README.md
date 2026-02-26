@@ -36,7 +36,7 @@ Schedule Trigger (ทุกอาทิตย์ 00:00)
 Set Audit Context
     │  กำหนด audit_prompt (week ending date), audit_date
     ▼
-Self-Improvement Agent  ←── OpenAI GPT-4o (temp: 0.2, max 5000 tokens)
+Self-Improvement Agent  ←── DeepSeek Chat (temp: 0.2, max 5000 tokens)
     │                   ←── Improvement Memory (session: "self_improvement_memory")
     │                   ←── Tool: n8n Execution Logs (n8n API /api/v1/executions)
     │                   ←── Tool: All KPI Data (Google Sheets → KPI_Dashboard)
@@ -89,7 +89,7 @@ Save Improvement Report
   "improvementProposals": [
     {
       "problem": "Content Agent generates content but blog post not linked to Stripe product page",
-      "solution": "Add WordPress REST API node after Ghost draft creation",
+      "solution": "Add WordPress REST API node after WordPress draft creation",
       "impact": "Increase organic traffic 2x in 2 months",
       "effort": "low",
       "risk": "low",
@@ -125,7 +125,7 @@ Save Improvement Report
 
 | Credential | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` | n8n → Credentials → DeepSeek API (OpenAI-compatible) |
 | Google Sheets OAuth2 | `Tool: All KPI Data`, `Save Improvement Report` | n8n → Credentials → Google Sheets OAuth2 |
 | Brave Search Header Auth | `Tool: Research New Tools` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | n8n API Key (Header Auth) | `Tool: n8n Execution Logs` | n8n Settings → n8n API → Create key → ใช้ Header Auth |

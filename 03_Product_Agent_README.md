@@ -15,7 +15,7 @@ Product Agent ทำหน้าที่เป็น **นักพัฒนา
 - ค้นหาความต้องการตลาดล่าสุดด้วย Brave Search
 - เลือก product type + topic ที่มี demand signal สูงสุดสัปดาห์นี้
 - สร้าง digital product ที่สมบูรณ์พร้อมขาย (prompt pack / n8n template / AI guide / checklist)
-- Publish เป็น paid Ghost post draft (เพื่อให้ human review ก่อน publish จริง)
+- Publish เป็น paid WordPress post draft (เพื่อให้ human review ก่อน publish จริง)
 - บันทึกลง `Product_Catalog` sheet สำหรับให้ Fulfillment Agent ดึงไป deliver
 
 ---
@@ -29,10 +29,10 @@ Schedule Trigger (ทุกอังคาร 09:00)
 Set Product Context
     │  กำหนด: product_prompt (วันที่ + คำสั่ง), product_week (เลขสัปดาห์)
     ▼
-Product Agent  ←── OpenAI GPT-4o (temp: 0.6, max 4000 tokens)
+Product Agent  ←── DeepSeek Chat (temp: 0.6, max 4000 tokens)
     │          ←── Product Memory (session: "product_agent_memory")
     │          ←── Tool: Market Research (Brave Search — freshness: pw)
-    │          ←── Tool: Publish to Ghost (toolCode — Ghost Admin API)
+    │          ←── Tool: Publish to WordPress (toolCode — WordPress API)
     │          ←── Tool: Read Product Catalog (Google Sheets — หลีกเลี่ยง duplicate)
     │
     │  Output JSON: productType, title, subtitle, price, description,
@@ -41,7 +41,7 @@ Product Agent  ←── OpenAI GPT-4o (temp: 0.6, max 4000 tokens)
 Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
     │
     ▼
-[จบ — Ghost draft รอ human review + Product_Catalog อัปเดตแล้ว]
+[จบ — WordPress draft รอ human review + Product_Catalog อัปเดตแล้ว]
 ```
 
 ---
@@ -51,7 +51,7 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 | Tool | ประเภท | หน้าที่ |
 |---|---|---|
 | `Tool: Market Research` | HTTP (Brave Search API) | ค้นหา AI automation pain points + trending products สัปดาห์นี้ |
-| `Tool: Publish to Ghost` | toolCode (Ghost Admin API) | สร้าง paid post draft พร้อม product content กำหนด visibility: paid |
+| `Tool: Publish to WordPress` | toolCode (WordPress API) | สร้าง paid post draft พร้อม product content กำหนด visibility: paid |
 | `Tool: Read Product Catalog` | HTTP (Google Sheets API) | อ่าน catalog เพื่อหลีกเลี่ยงสร้าง product ซ้ำ |
 
 ---
@@ -103,7 +103,7 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 
 | Credential | ใช้ที่ | วิธีตั้ง |
 |---|---|---|
-| OpenAI API | `OpenAI GPT-4o` | n8n → Credentials → OpenAI API |
+| OpenAI API | `DeepSeek Chat` | n8n → Credentials → DeepSeek API (OpenAI-compatible) |
 | Google Sheets OAuth2 | `Save to Product Catalog`, `Tool: Read Product Catalog` | n8n → Credentials → Google Sheets OAuth2 |
 | Brave Search Header Auth | `Tool: Market Research` | HTTP Header Auth: `X-Subscription-Token` — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 
@@ -111,8 +111,8 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 
 | Variable | ค่า | อธิบาย |
 |---|---|---|
-| `GHOST_API_URL` | `https://your-ghost-blog.com` | URL ของ Ghost blog (ไม่มี trailing slash) |
-| `GHOST_ADMIN_API_KEY` | Admin API Key จาก Ghost | Ghost → Settings → Integrations → Create Custom Integration |
+| `WORDPRESS_URL` | `https://your-ghost-blog.com` | URL ของ WordPress (ไม่มี trailing slash) |
+| `WORDPRESS_APP_PASSWORD` | Admin API Key จาก WordPress | WordPress → Settings → Integrations → Create Custom Integration |
 | `REPLACE_WITH_SPREADSHEET_ID` | Google Sheet ID | เปลี่ยนใน node parameters ของ `Tool: Read Product Catalog` และ `Save to Product Catalog` |
 
 ---
@@ -134,18 +134,18 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 
 ## วิธีการใช้งาน
 
-1. ตั้ง env vars: `GHOST_API_URL` + `GHOST_ADMIN_API_KEY`
+1. ตั้ง env vars: `WORDPRESS_URL` + `WORDPRESS_APP_PASSWORD`
 2. ตั้ง Brave Search credential ใน n8n
 3. สร้าง sheet `Product_Catalog` ใน Spreadsheet (columns: created_at, week_number, product_result, status)
 4. แทน `REPLACE_WITH_SPREADSHEET_ID` ด้วย Spreadsheet ID จริงในทั้ง 2 node
 5. **Activate** workflow
 
-### Ghost Setup สำหรับ Product Posts
+### WordPress Setup สำหรับ Product Posts
 
-1. Ghost Dashboard → Settings → Integrations → **Add custom integration**
+1. WordPress Dashboard → Settings → Integrations → **Add custom integration**
 2. ชื่อ: `n8n Product Agent`
-3. Copy **Admin API Key** → ใส่ใน env var `GHOST_ADMIN_API_KEY`
-4. ตั้ง membership tier ใน Ghost (paid tier สำหรับ product delivery)
+3. Copy **Admin API Key** → ใส่ใน env var `WORDPRESS_APP_PASSWORD`
+4. ตั้ง membership tier ใน WordPress (paid tier สำหรับ product delivery)
 
 ---
 
@@ -164,9 +164,9 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 ## Audit Checklist (ดูทุกวันอังคารหลัง 09:00)
 
 - [ ] มี record ใหม่ใน `Product_Catalog` sheet (week_number ตรงกับสัปดาห์นี้)
-- [ ] เปิด Ghost Dashboard → ดู draft post ที่สร้าง → ตรวจ content ครบถ้วน ไม่มี placeholder
+- [ ] เปิด WordPress Dashboard → ดู draft post ที่สร้าง → ตรวจ content ครบถ้วน ไม่มี placeholder
 - [ ] ตรวจ price ที่ Agent กำหนด — สมเหตุสมผลกับเนื้อหา?
-- [ ] **Publish Ghost post** (draft → published) เมื่อ approve แล้ว
+- [ ] **Publish WordPress post** (draft → published) เมื่อ approve แล้ว
 - [ ] อัปเดต `status` ใน Product_Catalog จาก `draft` → `published`
 - [ ] Execution log ไม่มี error (n8n → Executions)
 
@@ -176,11 +176,11 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 
 | ปัญหา | สาเหตุ | วิธีแก้ |
 |---|---|---|
-| Ghost API 401 | Admin API Key ผิดหรือหมดอายุ | Ghost → Settings → Integrations → regenerate key |
-| Ghost API 422 | HTML format ไม่ถูกต้อง | ตรวจ html_content ใน toolCode output ใน n8n |
+| WordPress REST API 401 | Admin API Key ผิดหรือหมดอายุ | WordPress → Settings → Integrations → regenerate key |
+| WordPress REST API 422 | HTML format ไม่ถูกต้อง | ตรวจ html_content ใน toolCode output ใน n8n |
 | Product ซ้ำกับสัปดาห์ก่อน | `Tool: Read Product Catalog` ไม่ทำงาน | ตรวจ Google Sheets credential + SPREADSHEET_ID |
 | Brave Search ไม่มีผล | API key หมด quota | ตรวจ api.search.brave.com dashboard |
-| `GHOST_API_URL env var` error | ยังไม่ได้ตั้ง env vars | n8n → Settings → Environment Variables |
+| `WORDPRESS_URL env var` error | ยังไม่ได้ตั้ง env vars | n8n → Settings → Environment Variables |
 
 ---
 
@@ -188,7 +188,7 @@ Save to Product Catalog (Google Sheets append → sheet: Product_Catalog)
 
 | ความถี่ | งาน | เวลา |
 |---|---|---|
-| **ทุกอังคาร** | Review Ghost draft → approve หรือ edit → publish | 15 นาที |
+| **ทุกอังคาร** | Review WordPress draft → approve หรือ edit → publish | 15 นาที |
 | **ทุกอังคาร** | อัปเดต `status` ใน Product_Catalog จาก `draft` → `published` | 2 นาที |
 | **รายเดือน** | ทบทวน product variety — หมุนครบ 4 types หรือยัง? | 5 นาที |
-| **ถ้า Ghost error** | ดู Execution log → แก้ credential หรือ URL | เมื่อพบปัญหา |
+| **ถ้า WordPress error** | ดู Execution log → แก้ credential หรือ URL | เมื่อพบปัญหา |

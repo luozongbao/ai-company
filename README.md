@@ -10,13 +10,13 @@
 | # | Revenue Stream | รายได้ประมาณ/เดือน | AI ทำได้ 100%? |
 |---|---|---|---|
 | 1 | **Affiliate Marketing** ฝังใน blog/social content | $200–2,000 | ✅ AI เขียน + publish + ฝัง link |
-| 2 | **Newsletter Subscription** (Ghost paid tier $9/mo) | $500–5,000 | ✅ AI เขียน + Ghost publish อัตโนมัติ |
+| 2 | **Newsletter Subscription** (WordPress paid tier $9/mo) | $500–5,000 | ✅ AI เขียน + WordPress publish อัตโนมัติ |
 | 3 | **Digital Products** (prompt packs, n8n templates, AI guides) | $300–3,000 | ✅ AI สร้าง + Stripe + AI deliver ทางอีเมล |
 
 **ทำไมถึงเลือก 3 model นี้?**
 - ไม่ต้องสต็อกสินค้า — ไม่มี physical goods
 - AI ผลิตสินค้าได้ (GPT-4o เขียน/generate ทุกอย่าง)
-- AI deliver ได้ (Ghost, Buffer, SendGrid ทำงานผ่าน API)
+- AI deliver ได้ (WordPress, Buffer, SendGrid ทำงานผ่าน API)
 - รายได้ passive — เงินเข้าแม้ระบบไม่ได้กำลัง "ทำงาน"
 
 ---
@@ -42,7 +42,7 @@ Blog + Social +          สร้าง digital
 Affiliate links          product ใหม่
 
         ↓                        ↓
-     Ghost + Buffer          Ghost paid post
+     WordPress + Buffer          WordPress post
      Affiliate revenue       Product_Catalog
 
              [ลูกค้าจ่ายเงิน Stripe]
@@ -52,7 +52,7 @@ Affiliate links          product ใหม่
 
                       ↓
         04_Finance_Agent (ทุกศุกร์ 18:00)
-        P&L: Stripe + affiliate + OpenAI costs
+        P&L: Stripe + affiliate + DeepSeek costs
 
                       ↓
         05_SelfImprovement (ทุกอาทิตย์ 00:00)
@@ -69,10 +69,10 @@ Affiliate links          product ใหม่
 | เวลา | Workflow | สิ่งที่เกิดขึ้น |
 |---|---|---|
 | จันทร์ 07:00 | CEO Orchestrator | อ่าน KPI → กำหนด content themes + product ประจำสัปดาห์ |
-| ทุกวัน 08:00 | Content Agent | Research → เขียน blog + affiliate links → publish Ghost + Buffer |
-| อังคาร 09:00 | Product Agent | Research demand → สร้าง digital product → Ghost paid post + log Catalog |
+| ทุกวัน 08:00 | Content Agent | Research → เขียน blog + affiliate links → publish WordPress + Buffer |
+| อังคาร 09:00 | Product Agent | Research demand → สร้าง digital product → WordPress post + log Catalog |
 | ตลอด 24/7 | Fulfillment Agent | รับ Stripe webhook → fetch product → SendGrid deliver ทันที |
-| ศุกร์ 18:00 | Finance Agent | Stripe + affiliate + OpenAI costs → P&L → KPI Dashboard |
+| ศุกร์ 18:00 | Finance Agent | Stripe + affiliate + DeepSeek costs → P&L → KPI Dashboard |
 | อาทิตย์ 00:00 | Self-Improvement | Audit workflows → เสนอ improvements → log Improvement_Log |
 
 ---
@@ -101,7 +101,7 @@ Strategy_Decisions◄── SEED (เขียน)
 | `01_CEO_Orchestrator.json` | CEO Orchestrator | จันทร์ 07:00 | วางแผน content themes + product สัปดาห์นี้ | [📄](01_CEO_Orchestrator_README.md) |
 | `02_Content_Agent.json` | Content Agent | ทุกวัน 08:00 | Blog + Social + Affiliate publishing | [📄](02_Content_Agent_README.md) |
 | `03_Product_Agent.json` | Product Agent | อังคาร 09:00 | สร้าง digital products รายสัปดาห์ | [📄](03_Product_Agent_README.md) |
-| `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | P&L: Stripe + affiliate + OpenAI costs | [📄](04_Finance_Agent_README.md) |
+| `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | P&L: Stripe + affiliate + DeepSeek costs | [📄](04_Finance_Agent_README.md) |
 | `05_SelfImprovement_Agent.json` | Self-Improvement | อาทิตย์ 00:00 | Audit + improvement proposals | [📄](05_SelfImprovement_Agent_README.md) |
 | `06_Fulfillment_Agent.json` | Fulfillment Agent | Stripe Webhook (24/7) | Auto-deliver digital products via email | [📄](06_Fulfillment_Agent_README.md) |
 | `99_SHUTDOWN_Graceful.json` | Graceful Shutdown | Manual | ปิดทุก Agent + final report | [📄](99_SHUTDOWN_Graceful_README.md) |
@@ -137,12 +137,12 @@ AI fetch product → SendGrid deliver ภายใน 1 นาที
 
 ```
 - n8n self-hosted (Docker บน VPS)
-- OpenAI API Key (GPT-4o)
+- DeepSeek API Key (GPT-4o)
 - Brave Search API Key (free 2,000 req/mo)
 - Google Sheets + OAuth2
 - Stripe Account
 - SendGrid Account (verified sender)
-- Ghost Blog
+- WordPress
 - Buffer Account (Optional)
 ```
 
@@ -185,7 +185,7 @@ docker run -d --restart unless-stopped \
 | Brave Search | HTTP Header Auth: X-Subscription-Token | Content, CEO, SEED — ดู [SETUP_BraveSearch.md](SETUP_BraveSearch.md) |
 | Stripe | HTTP Header Auth: Authorization Bearer sk_live_... | Finance — ดู [SETUP_Stripe.md](SETUP_Stripe.md) |
 | Buffer | HTTP Header Auth: Authorization Bearer TOKEN | Content Agent |
-| Ghost Admin | HTTP Header Auth: Authorization Ghost ADMIN_KEY | Content + Product |
+| WordPress Admin | HTTP Header Auth: Authorization WordPress ADMIN_KEY | Content + Product |
 
 **n8n Environment Variables (Settings → Environment Variables):**
 
@@ -195,8 +195,8 @@ docker run -d --restart unless-stopped \
 | `SENDGRID_API_KEY` | ดู [SETUP_SendGrid.md](SETUP_SendGrid.md) | Fulfillment Agent |
 | `SENDGRID_FROM_EMAIL` | verified sender email | Fulfillment Agent |
 | `COMPANY_NAME` | ชื่อแบรนด์ของคุณ | Fulfillment Agent |
-| `GHOST_API_URL` | https://your-ghost-blog.com | Content + Product |
-| `GHOST_ADMIN_API_KEY` | Ghost → Settings → Integrations | Product Agent |
+| `WORDPRESS_URL` | https://your-ghost-blog.com | Content + Product |
+| `WORDPRESS_APP_PASSWORD` | WordPress → Settings → Integrations | Product Agent |
 | `BUFFER_TWITTER_PROFILE_ID` | Buffer dashboard → Channels | Content Agent |
 | `REPLACE_WITH_SPREADSHEET_ID` | Google Sheet ID จาก URL | ทุก workflow JSON |
 
@@ -233,7 +233,7 @@ Week 2 → Activate 03_Product_Agent
 | VPS เดือนแรก (Hetzner CX22) | $6 |
 | Domain name | $12 |
 | OpenAI credit initial | $20 |
-| Ghost Pro (optional, can self-host) | $9 |
+| WordPress Pro (optional, can self-host) | $9 |
 | **รวม** | **~$47** |
 
 ### Monthly Burn Rate
@@ -244,7 +244,7 @@ Week 2 → Activate 03_Product_Agent
 | OpenAI API | $5–10 | $15–30 |
 | Brave Search | $0 | $0 |
 | SendGrid | $0 | $0 |
-| Ghost | $0 (self-host) | $9 |
+| WordPress | $0 (self-host) | $9 |
 | Buffer | $0 | $18 |
 | Domain | $1 | $1 |
 | **รวม** | **$12–17** | **$55–70** |
@@ -300,7 +300,7 @@ docker stop n8n
 | สถานการณ์ | Action |
 |---|---|
 | n8n error > 20% ติดต่อกัน 2 วัน | Executions tab → แก้ error |
-| OpenAI cost > $5/วัน ช่วงแรก | ตั้ง spending limit ใน OpenAI |
+| DeepSeek cost > $5/วัน ช่วงแรก | ตั้ง spending limit ใน OpenAI |
 | Content มี misleading claims | Deactivate Content Agent → แก้ prompt |
 | Fulfillment webhook ไม่ทำงาน | ตรวจ Stripe webhook events ใน n8n |
 
