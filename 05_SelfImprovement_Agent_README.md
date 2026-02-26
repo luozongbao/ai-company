@@ -152,8 +152,8 @@ Save Improvement Report
 
 ```
 01_CEO_Orchestrator ──┐
-02_Marketing_Agent  ──┤  ทุกสัปดาห์สร้าง execution logs + KPI data
-03_Sales_Agent      ──┤
+02_Content_Agent  ──┤  ทุกสัปดาห์สร้าง execution logs + KPI data
+03_Product_Agent      ──┤
 04_Finance_Agent    ──┘
                         │
                         ▼

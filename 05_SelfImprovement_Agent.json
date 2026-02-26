@@ -6,7 +6,9 @@
         "rule": {
           "interval": [
             {
-              "triggerAtDay": [0],
+              "triggerAtDay": [
+                0
+              ],
               "triggerAtHour": 0,
               "triggerAtMinute": 0
             }
@@ -17,7 +19,10 @@
       "name": "Schedule: Sunday Midnight",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -43,7 +48,10 @@
       "name": "Set Audit Context",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -57,7 +65,10 @@
       "name": "Self-Improvement Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     },
     {
       "parameters": {
@@ -71,7 +82,10 @@
       "name": "OpenAI GPT-4o",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [480, 520],
+      "position": [
+        480,
+        520
+      ],
       "credentials": {
         "openAiApi": {
           "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
@@ -88,7 +102,10 @@
       "name": "Improvement Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
-      "position": [700, 520]
+      "position": [
+        700,
+        520
+      ]
     },
     {
       "parameters": {
@@ -117,7 +134,16 @@
       "name": "Tool: n8n Execution Logs",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [920, 520]
+      "position": [
+        920,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_N8N_API_CREDENTIAL_ID",
+          "name": "n8n API Key"
+        }
+      }
     },
     {
       "parameters": {
@@ -133,7 +159,10 @@
       "name": "Tool: All KPI Data",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1140, 520]
+      "position": [
+        1140,
+        520
+      ]
     },
     {
       "parameters": {
@@ -166,7 +195,16 @@
       "name": "Tool: Research New Tools",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1360, 520]
+      "position": [
+        1360,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BRAVE_CREDENTIAL_ID",
+          "name": "Brave Search API"
+        }
+      }
     },
     {
       "parameters": {
@@ -195,7 +233,10 @@
       "name": "Save Improvement Report",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [960, 300],
+      "position": [
+        960,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -208,42 +249,90 @@
   "connections": {
     "Schedule: Sunday Midnight": {
       "main": [
-        [{ "node": "Set Audit Context", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Set Audit Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Set Audit Context": {
       "main": [
-        [{ "node": "Self-Improvement Agent", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Self-Improvement Agent": {
       "main": [
-        [{ "node": "Save Improvement Report", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Save Improvement Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "OpenAI GPT-4o": {
       "ai_languageModel": [
-        [{ "node": "Self-Improvement Agent", "type": "ai_languageModel", "index": 0 }]
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     },
     "Improvement Memory": {
       "ai_memory": [
-        [{ "node": "Self-Improvement Agent", "type": "ai_memory", "index": 0 }]
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: n8n Execution Logs": {
       "ai_tool": [
-        [{ "node": "Self-Improvement Agent", "type": "ai_tool", "index": 0 }]
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: All KPI Data": {
       "ai_tool": [
-        [{ "node": "Self-Improvement Agent", "type": "ai_tool", "index": 1 }]
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
       ]
     },
     "Tool: Research New Tools": {
       "ai_tool": [
-        [{ "node": "Self-Improvement Agent", "type": "ai_tool", "index": 2 }]
+        [
+          {
+            "node": "Self-Improvement Agent",
+            "type": "ai_tool",
+            "index": 2
+          }
+        ]
       ]
     }
   },
@@ -252,10 +341,18 @@
     "executionOrder": "v1",
     "saveManualExecutions": true
   },
-  "meta": { "instanceId": "ai-company-v1" },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
   "tags": [
-    { "name": "self-improvement", "createdAt": "2026-02-24" },
-    { "name": "audit", "createdAt": "2026-02-24" }
+    {
+      "name": "self-improvement",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "name": "audit",
+      "createdAt": "2026-02-24"
+    }
   ],
   "notes": "Runs every Sunday at midnight. Reads n8n execution logs + all KPI data, generates improvement proposals. Owner reviews Improvement_Log sheet weekly and manually applies high-priority changes."
 }

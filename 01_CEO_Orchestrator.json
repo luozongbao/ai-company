@@ -6,7 +6,9 @@
         "rule": {
           "interval": [
             {
-              "triggerAtDay": [1],
+              "triggerAtDay": [
+                1
+              ],
               "triggerAtHour": 7,
               "triggerAtMinute": 0
             }
@@ -17,7 +19,10 @@
       "name": "Schedule: Every Monday 7am",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -49,7 +54,10 @@
       "name": "Set Weekly Context",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -63,7 +71,10 @@
       "name": "CEO Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     },
     {
       "parameters": {
@@ -77,7 +88,10 @@
       "name": "OpenAI GPT-4o",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [540, 520],
+      "position": [
+        540,
+        520
+      ],
       "credentials": {
         "openAiApi": {
           "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
@@ -94,7 +108,10 @@
       "name": "CEO Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
-      "position": [760, 520]
+      "position": [
+        760,
+        520
+      ]
     },
     {
       "parameters": {
@@ -110,7 +127,10 @@
       "name": "Tool: Read KPI Reports",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [980, 520]
+      "position": [
+        980,
+        520
+      ]
     },
     {
       "parameters": {
@@ -139,7 +159,16 @@
       "name": "Tool: Market Intelligence",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1200, 520]
+      "position": [
+        1200,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BRAVE_CREDENTIAL_ID",
+          "name": "Brave Search API"
+        }
+      }
     },
     {
       "parameters": {
@@ -171,7 +200,10 @@
       "name": "Format Weekly Plan",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [940, 300]
+      "position": [
+        940,
+        300
+      ]
     },
     {
       "parameters": {
@@ -200,7 +232,10 @@
       "name": "Save to Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [1160, 300],
+      "position": [
+        1160,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -213,42 +248,90 @@
   "connections": {
     "Schedule: Every Monday 7am": {
       "main": [
-        [{ "node": "Set Weekly Context", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Set Weekly Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Set Weekly Context": {
       "main": [
-        [{ "node": "CEO Agent", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "CEO Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "CEO Agent": {
       "main": [
-        [{ "node": "Format Weekly Plan", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Format Weekly Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Format Weekly Plan": {
       "main": [
-        [{ "node": "Save to Google Sheets", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "OpenAI GPT-4o": {
       "ai_languageModel": [
-        [{ "node": "CEO Agent", "type": "ai_languageModel", "index": 0 }]
+        [
+          {
+            "node": "CEO Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     },
     "CEO Memory": {
       "ai_memory": [
-        [{ "node": "CEO Agent", "type": "ai_memory", "index": 0 }]
+        [
+          {
+            "node": "CEO Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Read KPI Reports": {
       "ai_tool": [
-        [{ "node": "CEO Agent", "type": "ai_tool", "index": 0 }]
+        [
+          {
+            "node": "CEO Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Market Intelligence": {
       "ai_tool": [
-        [{ "node": "CEO Agent", "type": "ai_tool", "index": 1 }]
+        [
+          {
+            "node": "CEO Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
       ]
     }
   },
@@ -257,10 +340,18 @@
     "executionOrder": "v1",
     "saveManualExecutions": true
   },
-  "meta": { "instanceId": "ai-company-v1" },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
   "tags": [
-    { "name": "ceo", "createdAt": "2026-02-24" },
-    { "name": "orchestrator", "createdAt": "2026-02-24" }
+    {
+      "name": "ceo",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "name": "orchestrator",
+      "createdAt": "2026-02-24"
+    }
   ],
   "notes": "STEP 2: Activate after 00_SEED_Strategy completes. Runs every Monday at 7:00am. Coordinates all other agents for the week."
 }

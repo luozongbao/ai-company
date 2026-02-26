@@ -6,7 +6,9 @@
         "rule": {
           "interval": [
             {
-              "triggerAtDay": [5],
+              "triggerAtDay": [
+                5
+              ],
               "triggerAtHour": 18,
               "triggerAtMinute": 0
             }
@@ -17,7 +19,10 @@
       "name": "Schedule: Friday 6pm",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -43,7 +48,10 @@
       "name": "Set Finance Context",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -57,7 +65,10 @@
       "name": "Finance Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     },
     {
       "parameters": {
@@ -71,7 +82,10 @@
       "name": "OpenAI GPT-4o",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [480, 520],
+      "position": [
+        480,
+        520
+      ],
       "credentials": {
         "openAiApi": {
           "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
@@ -88,7 +102,10 @@
       "name": "Finance Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
-      "position": [700, 520]
+      "position": [
+        700,
+        520
+      ]
     },
     {
       "parameters": {
@@ -117,7 +134,16 @@
       "name": "Tool: Stripe Revenue",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [920, 520]
+      "position": [
+        920,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_STRIPE_CREDENTIAL_ID",
+          "name": "Stripe Secret Key"
+        }
+      }
     },
     {
       "parameters": {
@@ -150,7 +176,10 @@
       "name": "Tool: API Cost Tracking",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1140, 520]
+      "position": [
+        1140,
+        520
+      ]
     },
     {
       "parameters": {
@@ -166,7 +195,10 @@
       "name": "Tool: Historical Reports",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1360, 520]
+      "position": [
+        1360,
+        520
+      ]
     },
     {
       "parameters": {
@@ -195,7 +227,10 @@
       "name": "Save Financial Report",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [960, 300],
+      "position": [
+        960,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -230,7 +265,10 @@
       "name": "Update KPI Dashboard",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [1200, 300],
+      "position": [
+        1200,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -243,47 +281,101 @@
   "connections": {
     "Schedule: Friday 6pm": {
       "main": [
-        [{ "node": "Set Finance Context", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Set Finance Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Set Finance Context": {
       "main": [
-        [{ "node": "Finance Agent", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Finance Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Finance Agent": {
       "main": [
-        [{ "node": "Save Financial Report", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Save Financial Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Save Financial Report": {
       "main": [
-        [{ "node": "Update KPI Dashboard", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Update KPI Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "OpenAI GPT-4o": {
       "ai_languageModel": [
-        [{ "node": "Finance Agent", "type": "ai_languageModel", "index": 0 }]
+        [
+          {
+            "node": "Finance Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     },
     "Finance Memory": {
       "ai_memory": [
-        [{ "node": "Finance Agent", "type": "ai_memory", "index": 0 }]
+        [
+          {
+            "node": "Finance Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Stripe Revenue": {
       "ai_tool": [
-        [{ "node": "Finance Agent", "type": "ai_tool", "index": 0 }]
+        [
+          {
+            "node": "Finance Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: API Cost Tracking": {
       "ai_tool": [
-        [{ "node": "Finance Agent", "type": "ai_tool", "index": 1 }]
+        [
+          {
+            "node": "Finance Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
       ]
     },
     "Tool: Historical Reports": {
       "ai_tool": [
-        [{ "node": "Finance Agent", "type": "ai_tool", "index": 2 }]
+        [
+          {
+            "node": "Finance Agent",
+            "type": "ai_tool",
+            "index": 2
+          }
+        ]
       ]
     }
   },
@@ -292,10 +384,18 @@
     "executionOrder": "v1",
     "saveManualExecutions": true
   },
-  "meta": { "instanceId": "ai-company-v1" },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
   "tags": [
-    { "name": "finance", "createdAt": "2026-02-24" },
-    { "name": "reporting", "createdAt": "2026-02-24" }
+    {
+      "name": "finance",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "name": "reporting",
+      "createdAt": "2026-02-24"
+    }
   ],
   "notes": "Runs every Friday at 6:00pm. Pulls Stripe revenue + OpenAI costs, generates profit report, saves to Google Sheets. Low temperature (0.1) for accurate financial analysis."
 }

@@ -2,7 +2,7 @@
 
 | Property | Value |
 |---|---|
-| **File** | `02_Marketing_Agent.json` |
+| **File** | `02_Content_Agent.json` |
 | **Trigger** | Schedule — ทุกวัน เวลา 08:00 |
 | **Version** | 1.1.0 |
 | **Status** | Activate หลังจาก `01_CEO_Orchestrator` รันแล้วอย่างน้อย 1 ครั้ง |
@@ -130,11 +130,11 @@ Content Generated? (IF node)
 01_CEO_Orchestrator
     │  กำหนด priority topics + content direction รายสัปดาห์
     ▼
-02_Marketing_Agent (รันทุกวัน)
+02_Content_Agent (รันทุกวัน)
     │
     │  Content → ดึง traffic → leads เข้าสู่ funnel
     ▼
-03_Sales_Agent
+03_Product_Agent
     │  ใช้ content ที่ Marketing สร้างเป็น social proof ในการ outreach
     │
     ▼

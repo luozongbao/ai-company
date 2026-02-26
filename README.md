@@ -99,8 +99,8 @@ Strategy_Decisions◄── SEED (เขียน)
 |---|---|---|---|---|
 | `00_SEED_Strategy.json` | SEED: Niche Research | Manual (1x) | เลือก niche + affiliate + product lineup | [📄](00_SEED_Strategy_README.md) |
 | `01_CEO_Orchestrator.json` | CEO Orchestrator | จันทร์ 07:00 | วางแผน content themes + product สัปดาห์นี้ | [📄](01_CEO_Orchestrator_README.md) |
-| `02_Marketing_Agent.json` | Content Agent | ทุกวัน 08:00 | Blog + Social + Affiliate publishing | [📄](02_Marketing_Agent_README.md) |
-| `03_Sales_Agent.json` | Product Agent | อังคาร 09:00 | สร้าง digital products รายสัปดาห์ | [📄](03_Sales_Agent_README.md) |
+| `02_Content_Agent.json` | Content Agent | ทุกวัน 08:00 | Blog + Social + Affiliate publishing | [📄](02_Content_Agent_README.md) |
+| `03_Product_Agent.json` | Product Agent | อังคาร 09:00 | สร้าง digital products รายสัปดาห์ | [📄](03_Product_Agent_README.md) |
 | `04_Finance_Agent.json` | Finance Agent | ศุกร์ 18:00 | P&L: Stripe + affiliate + OpenAI costs | [📄](04_Finance_Agent_README.md) |
 | `05_SelfImprovement_Agent.json` | Self-Improvement | อาทิตย์ 00:00 | Audit + improvement proposals | [📄](05_SelfImprovement_Agent_README.md) |
 | `06_Fulfillment_Agent.json` | Fulfillment Agent | Stripe Webhook (24/7) | Auto-deliver digital products via email | [📄](06_Fulfillment_Agent_README.md) |

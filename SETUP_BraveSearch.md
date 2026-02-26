@@ -23,9 +23,9 @@ Project นี้ใช้เป็น "ตา" ของทุก AI Agent — 
 |---|---|---|---|---|
 | `00_SEED_Strategy` | `web_research` | `/web/search` | count: 10 | วิเคราะห์ตลาด + business model research |
 | `01_CEO_Orchestrator` | `get_market_intelligence` | `/web/search` | count: 5 | market news รายสัปดาห์ |
-| `02_Marketing_Agent` | `get_trending_topics` | `/web/search` | count: 10, freshness: **pd** (past day) | trending topics ล่าสุด |
-| `02_Marketing_Agent` | `seo_keyword_research` | `/suggest` | — | keyword suggestions สำหรับ SEO blog |
-| `03_Sales_Agent` | `find_leads` | `/web/search` | count: 15, freshness: **pw** (past week) | ค้นหา leads บน Reddit/Twitter |
+| `02_Content_Agent` | `get_trending_topics` | `/web/search` | count: 10, freshness: **pd** (past day) | trending topics ล่าสุด |
+| `02_Content_Agent` | `seo_keyword_research` | `/suggest` | — | keyword suggestions สำหรับ SEO blog |
+| `03_Product_Agent` | `web_search` | `/web/search` | count: 10, freshness: **pw** (past week) | ค้นหา demand signal สำหรับ digital products รายสัปดาห์ |
 | `05_SelfImprovement` | `research_new_ai_tools` | `/web/search` | count: 10, freshness: **pw** (past week) | ค้นหา AI tools ใหม่ประจำสัปดาห์ |
 
 ---
@@ -108,8 +108,8 @@ Brave Search ใช้ **HTTP Header Authentication** ใน n8n — ทุก w
 |---|---|
 | `00_SEED_Strategy` | `Tool: Web Research` |
 | `01_CEO_Orchestrator` | `Tool: Market Intelligence` |
-| `02_Marketing_Agent` | `Tool: Trending Topics`, `Tool: SEO Keywords` |
-| `03_Sales_Agent` | `Tool: Find Leads` |
+| `02_Content_Agent` | `Tool: Trending Topics`, `Tool: SEO Keywords` |
+| `03_Product_Agent` | `Tool: Find Leads` |
 | `05_SelfImprovement_Agent` | `Tool: Research New Tools` |
 
 สำหรับแต่ละ node:

@@ -7,7 +7,10 @@
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -21,7 +24,10 @@
       "name": "Strategy Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [520, 300]
+      "position": [
+        520,
+        300
+      ]
     },
     {
       "parameters": {
@@ -35,7 +41,10 @@
       "name": "OpenAI GPT-4o",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [360, 520],
+      "position": [
+        360,
+        520
+      ],
       "credentials": {
         "openAiApi": {
           "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
@@ -52,7 +61,10 @@
       "name": "Window Buffer Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
-      "position": [580, 520]
+      "position": [
+        580,
+        520
+      ]
     },
     {
       "parameters": {
@@ -81,7 +93,16 @@
       "name": "Tool: Web Research",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [800, 520]
+      "position": [
+        800,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BRAVE_CREDENTIAL_ID",
+          "name": "Brave Search API"
+        }
+      }
     },
     {
       "parameters": {
@@ -94,7 +115,10 @@
       "name": "Tool: Score & Rank",
       "type": "@n8n/n8n-nodes-langchain.toolCode",
       "typeVersion": 1.1,
-      "position": [1020, 520]
+      "position": [
+        1020,
+        520
+      ]
     },
     {
       "parameters": {
@@ -132,7 +156,10 @@
       "name": "Prepare Output",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [820, 300]
+      "position": [
+        820,
+        300
+      ]
     },
     {
       "parameters": {
@@ -162,7 +189,10 @@
       "name": "Save Strategy Decision",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [1100, 300],
+      "position": [
+        1100,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -189,7 +219,10 @@
       "name": "Set Research Prompt",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [380, 300]
+      "position": [
+        380,
+        300
+      ]
     }
   ],
   "connections": {
@@ -293,8 +326,14 @@
     "instanceId": "ai-company-v1"
   },
   "tags": [
-    { "name": "seed", "createdAt": "2026-02-24" },
-    { "name": "strategy", "createdAt": "2026-02-24" }
+    {
+      "name": "seed",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "name": "strategy",
+      "createdAt": "2026-02-24"
+    }
   ],
   "notes": "STEP 1: Run this workflow ONCE before activating anything else. It researches and selects: content niche, affiliate programs, first digital products, newsletter strategy. Read output → save the niche + affiliate info to Google Sheets 'Strategy_Decisions' → then activate 01, 02, 03, 06 workflows in that order."
 }

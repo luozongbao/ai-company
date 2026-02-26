@@ -7,7 +7,10 @@
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -28,7 +31,7 @@
             {
               "id": "shutdown-003",
               "name": "workflow_ids_to_deactivate",
-              "value": "=[\"01_CEO_Orchestrator\",\"02_Marketing_Agent\",\"03_Sales_Agent\",\"04_Finance_Agent\",\"05_SelfImprovement_Agent\"]",
+              "value": "=[\"01_CEO_Orchestrator\",\"02_Content_Agent\",\"03_Product_Agent\",\"04_Finance_Agent\",\"05_SelfImprovement_Agent\",\"06_Fulfillment_Agent\"]",
               "type": "string"
             }
           ]
@@ -39,7 +42,10 @@
       "name": "Set Shutdown Context",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -53,7 +59,10 @@
       "name": "Generate Final Report",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     },
     {
       "parameters": {
@@ -67,7 +76,10 @@
       "name": "OpenAI GPT-4o",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [540, 520],
+      "position": [
+        540,
+        520
+      ],
       "credentials": {
         "openAiApi": {
           "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
@@ -84,7 +96,10 @@
       "name": "Shutdown Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
-      "position": [760, 520]
+      "position": [
+        760,
+        520
+      ]
     },
     {
       "parameters": {
@@ -100,7 +115,10 @@
       "name": "Tool: Final Financial Data",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [980, 520]
+      "position": [
+        980,
+        520
+      ]
     },
     {
       "parameters": {
@@ -129,7 +147,10 @@
       "name": "Save Final Report",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [960, 300],
+      "position": [
+        960,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -146,7 +167,10 @@
       "name": "Deactivate All Workflows",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1200, 300]
+      "position": [
+        1200,
+        300
+      ]
     },
     {
       "parameters": {
@@ -178,48 +202,99 @@
       "name": "Shutdown Complete",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [1440, 300]
+      "position": [
+        1440,
+        300
+      ]
     }
   ],
   "connections": {
     "Manual Trigger": {
       "main": [
-        [{ "node": "Set Shutdown Context", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Set Shutdown Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Set Shutdown Context": {
       "main": [
-        [{ "node": "Generate Final Report", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Generate Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Generate Final Report": {
       "main": [
-        [{ "node": "Save Final Report", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Save Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Save Final Report": {
       "main": [
-        [{ "node": "Deactivate All Workflows", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Deactivate All Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Deactivate All Workflows": {
       "main": [
-        [{ "node": "Shutdown Complete", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Shutdown Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "OpenAI GPT-4o": {
       "ai_languageModel": [
-        [{ "node": "Generate Final Report", "type": "ai_languageModel", "index": 0 }]
+        [
+          {
+            "node": "Generate Final Report",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     },
     "Shutdown Memory": {
       "ai_memory": [
-        [{ "node": "Generate Final Report", "type": "ai_memory", "index": 0 }]
+        [
+          {
+            "node": "Generate Final Report",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Final Financial Data": {
       "ai_tool": [
-        [{ "node": "Generate Final Report", "type": "ai_tool", "index": 0 }]
+        [
+          {
+            "node": "Generate Final Report",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -228,10 +303,18 @@
     "executionOrder": "v1",
     "saveManualExecutions": true
   },
-  "meta": { "instanceId": "ai-company-v1" },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
   "tags": [
-    { "name": "shutdown", "createdAt": "2026-02-24" },
-    { "name": "kill-switch", "createdAt": "2026-02-24" }
+    {
+      "name": "shutdown",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "name": "kill-switch",
+      "createdAt": "2026-02-24"
+    }
   ],
   "notes": "EMERGENCY/PLANNED SHUTDOWN: Run manually when you want to stop the AI company. Generates final report → saves to Google Sheets → outputs deactivation instructions. After running, follow the output instructions to toggle off each workflow in n8n UI, or run: docker stop n8n for immediate shutdown."
 }

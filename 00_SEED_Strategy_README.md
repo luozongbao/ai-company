@@ -113,8 +113,8 @@ Save Strategy Decision
     │  ผลลัพธ์บอกว่าควรเลือก business model อะไร
     ▼
 01_CEO_Orchestrator  ← activate หลังจากอ่าน output
-02_Marketing_Agent   ← activate ถ้าเลือก Content/Newsletter model
-03_Sales_Agent       ← activate ถ้าเลือก Freelance/Services model
+02_Content_Agent   ← activate ถ้าเลือก Content/Newsletter model
+03_Product_Agent       ← activate ถ้าเลือก Freelance/Services model
 04_Finance_Agent     ← activate เสมอ
 05_SelfImprovement   ← activate เสมอ
 ```

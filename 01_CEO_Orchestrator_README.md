@@ -112,8 +112,8 @@ Save to Google Sheets (sheet: Weekly_Plans)
 04_Finance_Agent ──→ อัปเดต KPI_Dashboard ───┘
 
 CEO Plan อ่านโดย:
-├── 02_Marketing_Agent (Content Agent)  — รู้ว่าต้องทำ content themes อะไรสัปดาห์นี้
-├── 03_Sales_Agent (Product Agent)      — รู้ว่า product type / topic ที่ควร launch
+├── 02_Content_Agent (Content Agent)  — รู้ว่าต้องทำ content themes อะไรสัปดาห์นี้
+├── 03_Product_Agent (Product Agent)      — รู้ว่า product type / topic ที่ควร launch
 └── 05_SelfImprovement                  — รู้ว่า CEO prioritize อะไรเพื่อ audit ตรงจุด
 ```
 

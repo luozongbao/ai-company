@@ -16,7 +16,10 @@
       "name": "Schedule: Daily 8am",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -42,7 +45,10 @@
       "name": "Set Daily Context",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -56,7 +62,10 @@
       "name": "Content Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     },
     {
       "parameters": {
@@ -70,7 +79,10 @@
       "name": "OpenAI GPT-4o",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.1,
-      "position": [480, 520],
+      "position": [
+        480,
+        520
+      ],
       "credentials": {
         "openAiApi": {
           "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
@@ -87,7 +99,10 @@
       "name": "Marketing Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
-      "position": [700, 520]
+      "position": [
+        700,
+        520
+      ]
     },
     {
       "parameters": {
@@ -120,7 +135,16 @@
       "name": "Tool: Trending Topics",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [920, 520]
+      "position": [
+        920,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BRAVE_CREDENTIAL_ID",
+          "name": "Brave Search API"
+        }
+      }
     },
     {
       "parameters": {
@@ -145,7 +169,16 @@
       "name": "Tool: SEO Keywords",
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
-      "position": [1140, 520]
+      "position": [
+        1140,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BRAVE_CREDENTIAL_ID",
+          "name": "Brave Search API"
+        }
+      }
     },
     {
       "parameters": {
@@ -174,7 +207,10 @@
       "name": "Content Generated?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [940, 300]
+      "position": [
+        940,
+        300
+      ]
     },
     {
       "parameters": {
@@ -193,7 +229,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "date": "={{ $now.toISO() }}",
-            "content_package": "={{ $('Marketing Agent').item.json.output }}",
+            "content_package": "={{ $('Content Agent').item.json.output }}",
             "status": "published"
           }
         },
@@ -203,7 +239,10 @@
       "name": "Log Content to Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [1180, 220],
+      "position": [
+        1180,
+        220
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -229,7 +268,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "date": "={{ $now.toISO() }}",
-            "workflow": "02_Marketing_Agent",
+            "workflow": "02_Content_Agent",
             "error": "Content generation failed or empty output"
           }
         },
@@ -239,7 +278,10 @@
       "name": "Log Error",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
-      "position": [1180, 400],
+      "position": [
+        1180,
+        400
+      ],
       "continueOnFail": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -257,7 +299,10 @@
       "name": "Parse Content for Publishing",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1420, 220],
+      "position": [
+        1420,
+        220
+      ],
       "continueOnFail": true
     },
     {
@@ -290,7 +335,10 @@
       "name": "Publish via Buffer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1660, 140],
+      "position": [
+        1660,
+        140
+      ],
       "continueOnFail": true,
       "credentials": {
         "httpHeaderAuth": {
@@ -314,7 +362,10 @@
       "name": "Publish to Ghost Blog",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1660, 300],
+      "position": [
+        1660,
+        300
+      ],
       "continueOnFail": true,
       "credentials": {
         "httpHeaderAuth": {
@@ -327,56 +378,124 @@
   "connections": {
     "Schedule: Daily 8am": {
       "main": [
-        [{ "node": "Set Daily Context", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Set Daily Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Set Daily Context": {
       "main": [
-        [{ "node": "Marketing Agent", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Marketing Agent": {
+    "Content Agent": {
       "main": [
-        [{ "node": "Content Generated?", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Content Generated?",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Content Generated?": {
       "main": [
-        [{ "node": "Log Content to Sheets", "type": "main", "index": 0 }],
-        [{ "node": "Log Error", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Log Content to Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Log Content to Sheets": {
       "main": [
-        [{ "node": "Parse Content for Publishing", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Parse Content for Publishing",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Parse Content for Publishing": {
       "main": [
         [
-          { "node": "Publish via Buffer", "type": "main", "index": 0 },
-          { "node": "Publish to Ghost Blog", "type": "main", "index": 0 }
+          {
+            "node": "Publish via Buffer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Publish to Ghost Blog",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "OpenAI GPT-4o": {
       "ai_languageModel": [
-        [{ "node": "Marketing Agent", "type": "ai_languageModel", "index": 0 }]
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     },
     "Marketing Memory": {
       "ai_memory": [
-        [{ "node": "Marketing Agent", "type": "ai_memory", "index": 0 }]
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: Trending Topics": {
       "ai_tool": [
-        [{ "node": "Marketing Agent", "type": "ai_tool", "index": 0 }]
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tool: SEO Keywords": {
       "ai_tool": [
-        [{ "node": "Marketing Agent", "type": "ai_tool", "index": 1 }]
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
       ]
     }
   },
@@ -385,10 +504,18 @@
     "executionOrder": "v1",
     "saveManualExecutions": true
   },
-  "meta": { "instanceId": "ai-company-v1" },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
   "tags": [
-    { "name": "marketing", "createdAt": "2026-02-24" },
-    { "name": "content", "createdAt": "2026-02-24" }
+    {
+      "name": "marketing",
+      "createdAt": "2026-02-24"
+    },
+    {
+      "name": "content",
+      "createdAt": "2026-02-24"
+    }
   ],
   "notes": "Runs daily at 8:00am. Creates Twitter threads, LinkedIn posts, newsletter content, and blog outlines. Content is logged to Google Sheets AND published: Twitter/LinkedIn via Buffer API, newsletter as Ghost draft. Set BUFFER_TWITTER_PROFILE_ID, GHOST_API_URL env vars + add Buffer/Ghost credentials before activating."
 }

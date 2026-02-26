@@ -129,7 +129,7 @@ Update KPI Dashboard
 ## การทำงานร่วมกับ Workflow อื่น
 
 ```
-03_Sales_Agent
+03_Product_Agent
     │  ปิด deal → รับเงินผ่าน Stripe
     ▼
 04_Finance_Agent (ทุกศุกร์)

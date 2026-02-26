@@ -2,8 +2,8 @@
 
 | Property | Value |
 |---|---|
-| **ใช้โดย Workflow** | `03_Sales_Agent.json` |
-| **หน้าที่** | ส่ง personalized outreach email ไปยัง prospects |
+| **ใช้โดย Workflow** | `06_Fulfillment_Agent.json` |
+| **หน้าที่** | ส่ง product delivery email อัตโนมัติเมื่อมีการซื้อ Stripe |
 | **ราคา** | Free tier — $0 (3,000 email/เดือน) |
 | **เวลาตั้งค่า** | ~15 นาที |
 
@@ -30,7 +30,7 @@ SendGrid คือบริการ **Transactional Email API** ที่ใช
 
 | Plan | ราคา | Email/เดือน | เหมาะกับ |
 |---|---|---|---|
-| **Free** | **$0** | 3,000 | ✅ เดือน 1–6 (Sales Agent ส่ง ~10/วัน = ~300/เดือน) |
+| **Free** | **$0** | 3,000 | ✅ เดือน 1–6 (Fulfillment Agent ส่ง delivery email ~30/เดือน) |
 | Essentials 50K | $19.95/เดือน | 50,000 | เมื่อ scale > 1,000 leads/เดือน |
 | Pro 100K | $89.95/เดือน | 100,000 | เมื่อมีรายได้แล้ว |
 
@@ -87,7 +87,7 @@ SendGrid ต้องการ verify ว่า email ที่จะส่ง *
 
 1. SendGrid dashboard → **Settings → API Keys**
 2. คลิก **Create API Key**
-3. ตั้งชื่อ: `n8n-ai-company-sales`
+3. ตั้งชื่อ: `n8n-fulfillment-agent`
 4. เลือก Permission: **Restricted Access**
    - **Mail Send** → Full Access ✅
    - อื่นๆ ไม่จำเป็น → ปล่อยไว้ No Access
@@ -120,7 +120,7 @@ SG.xxxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 
 ### Step 5 — ทดสอบก่อน Activate Sales Agent
 
-ใน n8n เปิด `03_Sales_Agent` → **Execute Workflow** (manual) → ดู output:
+ใน n8n เปิด `06_Fulfillment_Agent` → ทดสอบโดยยิง Stripe test webhook ดู output:
 
 ```json
 {
@@ -135,29 +135,32 @@ SG.xxxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 
 ---
 
-## การทำงานใน 03_Sales_Agent
+## การทำงานใน 06_Fulfillment_Agent
 
-`Tool: Send Email` ใน workflow นี้ใช้ **Code node** (ไม่ใช่ n8n SendGrid node) ที่เรียก SendGrid API โดยตรง:
+`Tool: Send Delivery Email` ใน workflow นี้ใช้ **Code node** (toolCode) ที่เรียก SendGrid API โดยตรง:
 
 ```
-Sales Agent ตัดสินใจส่ง email
+Fulfillment Agent ตัดสินใจส่ง delivery email
     │
     ▼
-Tool: Send Email (Code node)
+Tool: Send Delivery Email (toolCode)
     │  อ่าน SENDGRID_API_KEY จาก $env
     │  อ่าน SENDGRID_FROM_EMAIL จาก $env
     │  อ่าน COMPANY_NAME จาก $env
     │
-    ├── validate: to_email + body ต้องมี
-    ├── POST https://api.sendgrid.com/v3/mail/send
-    └── return { success: true, to, subject, from }
+    ├── validate: to_email ต้องมี
+    ├── POST https://api.sendgrid.com/v3/mail/send (HTML email)
+    └── return { success: true, to, subject, productTitle, sentAt }
 ```
 
 Agent จะเรียก tool นี้พร้อม input:
 ```json
 {
-  "to_email": "prospect@company.com",
-  "subject": "Quick automation idea for [Company]",
+  "to_email": "customer@example.com",
+  "customer_name": "John Doe",
+  "product_title": "50 ChatGPT Prompts for Freelancers",
+  "subject": "Your 50 ChatGPT Prompts for Freelancers is here! 🎉",
+  "body_html": "<p>Thank you...</p><pre>PROMPT 1:...</pre>"
   "body": "Hi [Name], saw your post about..."
 }
 ```

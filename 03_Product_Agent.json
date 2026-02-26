@@ -1,0 +1,337 @@
+{
+  "name": "03 Product Agent — Weekly Digital Product Creation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtDay": [
+                2
+              ],
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000001",
+      "name": "Schedule: Every Tuesday 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "prod-ctx-001",
+              "name": "product_prompt",
+              "value": "=Today is {{ $now.toFormat('cccc, MMMM d yyyy') }}. Research what AI automation digital products people are looking for this week. Then create one complete, high-quality digital product ready to sell at $9–$29.",
+              "type": "string"
+            },
+            {
+              "id": "prod-ctx-002",
+              "name": "product_week",
+              "value": "={{ $now.weekNumber }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000002",
+      "name": "Set Product Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.product_prompt }}",
+        "options": {
+          "systemMessage": "You are the Product Agent for an AI Content Media & Digital Products company. Every week your job is to create ONE new digital product that can be sold instantly via Stripe with zero manual work.\n\nProduct Types (rotate weekly):\n- **Prompt Pack**: 30–50 carefully crafted GPT-4o prompts for a specific use case (e.g., 'Freelancer Productivity Prompts', 'n8n Workflow Prompts')\n- **n8n Workflow Template**: A complete n8n workflow JSON + setup guide for a common automation\n- **AI Starter Guide**: 1,500–2,500 word PDF-ready guide on using AI for a specific task\n- **Automation Checklist**: Detailed checklist + resources for automating a specific business process\n\nProcess:\n1. MARKET RESEARCH: Use web_search to find what AI automation products are selling well this week. Look for Reddit/Twitter/forums discussions about automation pain points.\n2. PRODUCT SELECTION: Pick the product type and topic with highest demand signal this week.\n3. CREATE PRODUCT: Write the complete product content (ready to deliver as-is via email):\n   - Full title and subtitle\n   - Price recommendation ($9 / $19 / $29)\n   - Short description (for Ghost/Stripe product page, 100 words)\n   - Complete product content (all prompts, or full guide, or full workflow JSON + instructions)\n   - Delivery format: Markdown text ready to be converted to PDF or .txt file\n4. GHOST POST: Create a paid Ghost post draft with the product as gated content.\n\nOutput JSON: { productType, title, subtitle, price, description, content, deliveryFormat, ghostPostReady, weekNumber, demandSignal }\n\nFORBIDDEN: Plagiarism, fake reviews, misleading product descriptions, overpricing thin content."
+        }
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000003",
+      "name": "Product Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.6,
+          "maxTokens": 4000
+        }
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000004",
+      "name": "OpenAI GPT-4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "product_agent_memory"
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000005",
+      "name": "Product Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "name": "web_search",
+        "description": "Search the web for trending AI/automation pain points, popular digital products, and Reddit/Twitter discussions about what people need help automating. Use this before deciding what product to create.",
+        "method": "GET",
+        "url": "https://api.search.brave.com/res/v1/web/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `search query for trending AI automation products or pain points`, 'string') }}"
+            },
+            {
+              "name": "count",
+              "value": "10"
+            },
+            {
+              "name": "freshness",
+              "value": "pw"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000006",
+      "name": "Tool: Market Research",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        520
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_WITH_BRAVE_CREDENTIAL_ID",
+          "name": "Brave Search API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "create_ghost_product_post",
+        "description": "Create a paid Ghost post (gated content) for the new digital product. The post will serve as the product page and delivery mechanism for paid subscribers. Provide JSON: { title, html_content, price_label, excerpt }",
+        "language": "javaScript",
+        "jsCode": "const params = $input.first().json;\nconst title   = params.title   || 'New AI Product';\nconst excerpt = params.excerpt || params.description || '';\nconst html    = params.html_content || `<p>${params.content || ''}</p>`;\n\nconst ghostUrl = $env.GHOST_API_URL || '';\nconst ghostKey = $env.GHOST_ADMIN_API_KEY || '';\nif (!ghostUrl || !ghostKey) throw new Error('GHOST_API_URL and GHOST_ADMIN_API_KEY env vars must be set');\n\nconst payload = {\n  posts: [{\n    title,\n    html,\n    excerpt,\n    status: 'draft',\n    visibility: 'paid',\n    tags: [{ name: 'product' }, { name: 'digital-download' }]\n  }]\n};\n\nconst response = await this.helpers.httpRequest({\n  method: 'POST',\n  url: `${ghostUrl}/ghost/api/admin/posts/`,\n  headers: {\n    'Authorization': `Ghost ${ghostKey}`,\n    'Content-Type': 'application/json',\n    'Accept-Version': 'v5.0'\n  },\n  body: JSON.stringify(payload)\n});\n\nconst post = response.posts?.[0];\nreturn { success: true, postId: post?.id, postUrl: post?.url, title };"
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000007",
+      "name": "Tool: Publish to Ghost",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "name": "read_existing_products",
+        "description": "Read the existing Product_Catalog from Google Sheets to avoid creating duplicate products and to see what has sold well.",
+        "method": "GET",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/REPLACE_WITH_SPREADSHEET_ID/values/Product_Catalog",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000008",
+      "name": "Tool: Read Product Catalog",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Product_Catalog",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "created_at": "={{ $now.toISO() }}",
+            "week_number": "={{ $('Set Product Context').item.json.product_week }}",
+            "product_result": "={{ $json.output }}",
+            "status": "draft"
+          }
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-0004-0004-0004-000000000009",
+      "name": "Save to Product Catalog",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        960,
+        300
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule: Every Tuesday 9am": {
+      "main": [
+        [
+          {
+            "node": "Set Product Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Product Context": {
+      "main": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Agent": {
+      "main": [
+        [
+          {
+            "node": "Save to Product Catalog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4o": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Market Research": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool: Publish to Ghost": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_tool",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Tool: Read Product Catalog": {
+      "ai_tool": [
+        [
+          {
+            "node": "Product Agent",
+            "type": "ai_tool",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "meta": {
+    "instanceId": "ai-company-v1"
+  },
+  "tags": [
+    {
+      "name": "product",
+      "createdAt": "2026-02-25"
+    },
+    {
+      "name": "digital-products",
+      "createdAt": "2026-02-25"
+    }
+  ],
+  "notes": "Runs every Tuesday 09:00. Product Agent researches weekly demand, creates one new digital product (prompt pack / n8n template / AI guide / checklist), publishes as paid Ghost draft, logs to Product_Catalog sheet. Required env vars: GHOST_API_URL, GHOST_ADMIN_API_KEY. Create 'Product_Catalog' sheet with columns: created_at, week_number, product_result, status."
+}
